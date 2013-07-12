@@ -1,0 +1,4 @@
+<migrate-config>
+	<source type="excel" value="data/excel/test1.xls" />
+	<target type="excel" value="data/excel/output.xls" />
+</migrate-config>

@@ -1,0 +1,28 @@
+<migrate-config>
+	<source type="csv" value="data/csv/data1.csv" />
+	<target type="jdbc">
+		<data-source>
+			<driver-class value="com.mysql.jdbc.Driver" />
+			<url value="jdbc:mysql://localhost:3307/pmdt" />
+			<username value="root" />
+			<password value="root" />
+		</data-source>
+		<table-name value="t_user" />
+	</target>
+
+	<config-items>
+		<item name="f_id" type="string" mapping-key="0" />
+		<item name="f_username" type="string" mapping-key="2" />
+		<item name="f_password" type="string" mapping-key="3">
+			<handler value="script">
+				<![CDATA[	
+					if (height &lt; 120) {
+						return "矮";
+					} else {
+						return "高";
+					}
+				]]>
+			</handler>
+		</item>
+	</config-items>
+</migrate-config>

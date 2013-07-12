@@ -1,0 +1,70 @@
+<migrate-config>
+
+	<!-- 注册迁移类型处理器 -->
+	<migrate-types>
+		<migrate-type name="excel">
+			<reader class="org.yubing.datmv.type.excel.ExcelReader" />
+			<writer class="org.yubing.datmv.type.excel.ExcelWriter" />
+		</migrate-type>
+		<migrate-type name="csv">
+			<reader class="org.yubing.datmv.type.csv.CsvReader" />
+			<writer class="org.yubing.datmv.type.csv.CsvWriter" />
+		</migrate-type>
+		<migrate-type name="jdbc">
+			<reader class="org.yubing.datmv.type.jdbc.JdbcReader" />
+			<writer class="org.yubing.datmv.type.jdbc.JdbcWriter" />
+			<constructor-arg-parser
+				class="org.yubing.datmv.config.xml.parser.argment.JdbcConstructorArgParser" />
+		</migrate-type>
+		<migrate-type name="mem.map">
+			<writer class="org.yubing.datmv.type.mem.map.MapWriter" />
+		</migrate-type>
+	</migrate-types>
+
+	<!-- 注册预览类型处理器 -->
+	<preview-types>
+		<preview-type name="console">
+			<page-preview class="org.yubing.datmv.core.internal.ConsolePagePreview" />
+		</preview-type>
+		<preview-type name="page.writer">
+			<page-preview class="org.yubing.datmv.core.internal.PageWriterPreview" />
+			<constructor-arg-parser
+				class="org.yubing.datmv.config.xml.parser.argment.PageWriterArgParser" />
+		</preview-type>
+	</preview-types>
+
+	<!-- 注册迁移监听器 -->
+	<migrate-listeners>
+		<migrate-listener name="log">
+			<listener class="org.yubing.datmv.listener.LogListener" />
+		</migrate-listener>
+	</migrate-listeners>
+
+	<!-- 注册记录过滤器 -->
+	<record-filters>
+		<record-filter name="hidden_matched">
+			<filter class="org.yubing.datmv.filter.HiddenMatchedRecordFilter" />
+			<constructor-arg-parser
+				class="org.yubing.datmv.config.xml.parser.argment.MultiStringArgmentsParser" />
+		</record-filter>
+		<record-filter name="hidden_first_record">
+			<filter class="org.yubing.datmv.filter.HiddenFirstRecordFilter" />
+		</record-filter>
+		<record-filter name="write_header">
+			<filter class="org.yubing.datmv.filter.HeaderWriteRecordFilter" />
+		</record-filter>
+	</record-filters>
+
+	<!-- 注册数据域映射处理器 -->
+	<mapping-handlers>
+		<mapping-handler name="script">
+			<handler class="org.yubing.datmv.mapping.handler.JavaScriptMappingHandler" />
+			<constructor-arg-parser
+				class="org.yubing.datmv.config.xml.parser.argment.ScriptBlockArgmentParser" />
+		</mapping-handler>
+	</mapping-handlers>
+
+	<!-- 默认使用控制台预览输出-->
+	<preview type="console"/>
+	
+</migrate-config>

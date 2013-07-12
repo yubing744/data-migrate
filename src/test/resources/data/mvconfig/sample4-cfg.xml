@@ -1,0 +1,29 @@
+<migrate-config>
+	<source type="excel" value="${base.dir}/data/excel/test2.xls" />
+ 
+	<target type="jdbc">
+		<data-source>
+			<driver-class value="com.mysql.jdbc.Driver" />
+			<url value="jdbc:mysql://localhost:3307/pmdt" />
+			<username value="root" />
+			<password value="root" />
+		</data-source>
+		<dialect value="org.yubing.datmv.type.jdbc.dialect.MySqlDialect"/>
+		<table-name value="t_user" />
+	</target>
+ 
+ 	 
+	<preview type="page.writer">
+		<target type="excel" value="${base.dir}/data/excel/preview-output.xls"/>
+	</preview>
+ 	 
+ 
+	<config-items>
+		<item name="post_code" type="string" mapping-key="0" />
+        <item name="req_post" type="string" mapping-key="3"/>
+		<item name="condition" type="string" mapping-key="9" />                  
+	</config-items>
+	
+    <filter value="write_header"/>
+    <filter value="hidden_first_record"/>
+</migrate-config>

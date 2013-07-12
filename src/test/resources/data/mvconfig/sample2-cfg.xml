@@ -1,0 +1,41 @@
+<migrate-config>
+	<source type="jdbc">
+		<data-source>
+			<driver-class value="com.mysql.jdbc.Driver"/>
+			<url value="jdbc:mysql://localhost:3307/pmdt"/>
+			<username value="root"/>
+			<password value="root"/>
+		</data-source>
+		<table-name value="t_project"/>
+	</source>
+	
+	<target type="csv" value="data/csv/data1.csv"/>
+	
+	<preview type="page.writer">
+		<target type="excel" value="data/excel/preview-output.xls"/>
+	</preview>
+	
+	<config-items>
+		<item name="ID" type="string" mapping-key="f_id"/>
+		<item name="Name" type="string" mapping-key="f_name"/>
+		<item name="Status" type="string" mapping-key="f_status">
+			<handler value="script">
+				<![CDATA[	
+					var rtn = "";
+					if (data == 1) {
+						rtn = "未启动";
+					} else if (data==2){
+						rtn = "启动";
+					} else {
+						rtn = "停止";
+					}
+					rtn;
+				]]>
+			</handler>
+		</item>
+	</config-items>
+	
+	<filter value="empty"/>
+	<listener value="log"/>
+			
+</migrate-config>
