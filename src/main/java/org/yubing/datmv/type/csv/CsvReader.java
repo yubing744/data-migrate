@@ -76,22 +76,20 @@ public class CsvReader implements PageReader {
 
 				for (int c = 0; c < colSize; c++) {
 					String contents = datas[c];
-					SimpleDataField cellData = new SimpleDataField();
-					String key = "" + c;
-					cellData.setName(key);
-
+					
+					SimpleDataField cellData = new SimpleDataField(String.valueOf(c), DataType.STRING);
+					 
 					if (contents.startsWith("\"") && contents.endsWith("\"")) {
-						cellData.setType(DataType.STRING);
 						cellData.setData(contents.substring(1, contents
 								.length() - 1));
 					} else {
-						cellData.setType(DataType.NUMBER);
 						cellData.setData(contents);
 					}
 
-					record.addDataField(key, cellData);
+					record.addDataField(cellData.getName(), cellData);
 				}
 			}
+			
 			page.writeRecord(record);
 		}
 

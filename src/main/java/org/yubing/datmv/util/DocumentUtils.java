@@ -130,4 +130,22 @@ public class DocumentUtils {
 		}
 		return attrVal;
 	}
+	
+	/**
+	 * 查找标签的Text内容
+	 * 
+	 * @param ele
+	 * @param attrName
+	 * @return
+	 */
+	public static String findTextContentByName(Element ele, String attrName) {
+		String attrVal = ele.getAttribute(attrName);
+		if (attrVal == null || attrVal.trim().equals("")) {
+			Element attrEle = findOneElementByTagName(ele, attrName);
+			if (attrEle != null) {
+				attrVal = attrEle.getTextContent();
+			}
+		}
+		return attrVal;
+	}
 }

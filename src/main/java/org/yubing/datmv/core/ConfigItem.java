@@ -16,6 +16,20 @@ public interface ConfigItem {
 	String getName();
 
 	/**
+	 * 获取配置的数据类型
+	 * 
+	 * @return
+	 */
+	String getType();
+	
+	/**
+	 * 获取默认值
+	 * 
+	 * @return
+	 */
+	Object getDefaultValue();
+	
+	/**
 	 * 获取映射 key
 	 * 
 	 * @return

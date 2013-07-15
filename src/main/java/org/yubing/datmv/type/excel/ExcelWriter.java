@@ -93,8 +93,8 @@ public class ExcelWriter implements PageWriter {
 
 	private void writeDataField(DataField dataField, int colNum, int writeLine)
 			throws RowsExceededException, WriteException {
-		String data = dataField.getData();
-		Label labelCF = new Label(colNum, writeLine, data);
+		Object data = dataField.getData();
+		Label labelCF = new Label(colNum, writeLine, data.toString());
 		ws.addCell(labelCF);
 	}
 

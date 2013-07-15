@@ -7,14 +7,14 @@ import org.yubing.datmv.core.PageWriter;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordPage;
 
-public class MapWriter implements PageWriter {
+public class MapWriter<K, V> implements PageWriter {
 
 	public static final String KEY_KEY = "key";
 	public static final String VALUE_KEY = "value";
 
-	private Map<String, Object> map;
+	private Map<K, V> map;
 
-	public MapWriter(Map<String, Object> map) {
+	public MapWriter(Map<K, V> map) {
 		this.map = map;
 	}
 
@@ -31,12 +31,13 @@ public class MapWriter implements PageWriter {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void writeRecord(Record record) {
 		if (record != null && map != null) {
 			DataField keyField = record.getDataField(KEY_KEY);
 			DataField valField = record.getDataField(VALUE_KEY);
 			if (keyField != null && valField != null) {
-				map.put(keyField.getData(), valField.getData());
+				map.put((K)keyField.getData(), (V)valField.getData());
 			}
 		}
 	}

@@ -6,37 +6,31 @@ public class SimpleDataField implements DataField {
 
 	private String name;
 	private String type;
-	private String data;
+	
+	private Object data;
 
 	public SimpleDataField() {
 		super();
 	}
 
-	public SimpleDataField(String name) {
+	public SimpleDataField(String name, String type) {
 		this.name = name;
+		this.type = type;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getType() {
 		return type;
 	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getData() {
+	public Object getData() {
 		return data;
 	}
 
-	public void setData(String data) {
+	public void setData(Object data) {
 		this.data = data;
 	}
 

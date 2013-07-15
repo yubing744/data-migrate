@@ -26,6 +26,11 @@ public class MigrateTypeConfig {
 	 * 
 	 */
 	private String constructorArgParser = null;
+	
+	private String readerConstructorArgParser = null;
+	
+	private String writerConstructorArgParser = null;
+	
 
 	public MigrateTypeConfig(String name) {
 		super();
@@ -50,6 +55,23 @@ public class MigrateTypeConfig {
 
 	public void setWriter(String writer) {
 		this.writer = writer;
+	}
+
+	
+	public String getReaderConstructorArgParser() {
+		return readerConstructorArgParser;
+	}
+
+	public void setReaderConstructorArgParser(String readerConstructorArgParser) {
+		this.readerConstructorArgParser = readerConstructorArgParser;
+	}
+
+	public String getWriterConstructorArgParser() {
+		return writerConstructorArgParser;
+	}
+
+	public void setWriterConstructorArgParser(String writerConstructorArgParser) {
+		this.writerConstructorArgParser = writerConstructorArgParser;
 	}
 
 	public String getConstructorArgParser() {

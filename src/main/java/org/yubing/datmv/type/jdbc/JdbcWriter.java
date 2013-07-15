@@ -1,6 +1,8 @@
 package org.yubing.datmv.type.jdbc;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,21 +51,18 @@ public class JdbcWriter implements PageWriter {
 		
 		baseSql = modifySql;
 		if (StringUtils.isBlank(baseSql)) {
-			baseSql = "insert into " + this.tableName;
+			baseSql = "insert into `" + this.tableName + "` ";
 		}
+		
 		System.out.println(dialect);
 	}
 
 	public void writePage(RecordPage recPage) {
 		recPage.reset();
 
-		try {
-			while (recPage.hasNext()) {
-				Record record = recPage.readRecord();
-				writeRecord(record);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		while (recPage.hasNext()) {
+			Record record = recPage.readRecord();
+			writeRecord(record);
 		}
 	}
 
@@ -72,16 +71,18 @@ public class JdbcWriter implements PageWriter {
 
 		StringBuilder colDatas = new StringBuilder("(");
 		StringBuilder valDatas = new StringBuilder("(");
-
+		List<Object> args = new ArrayList<Object>();
+		
 		if (record != null) {
 			Set<String> keys = record.keySet();
 			for (Iterator<String> it = keys.iterator(); it.hasNext();) {
 				String key = it.next();
 				DataField dataField = record.getDataField(key);
+				
 				if (dataField != null) {
 					colDatas.append(dataField.getName()).append(",");
-					valDatas.append("'").append(dataField.getData())
-							.append("'").append(",");
+					valDatas.append("?").append(",");
+					args.add(dataField.getData());
 				}
 			}
 			if (colDatas.length() > 1) {
@@ -97,7 +98,7 @@ public class JdbcWriter implements PageWriter {
 
 		insertSql.append(colDatas).append(" values").append(valDatas);
 
-		boolean success = dbHelper.modify(insertSql.toString());
+		boolean success = dbHelper.update(insertSql.toString(), args.toArray(new Object[args.size()]));
 		if (!success) {
 			throw new RuntimeException("Error in sql:" + insertSql);
 		}

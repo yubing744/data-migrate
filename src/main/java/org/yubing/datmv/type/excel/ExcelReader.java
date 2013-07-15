@@ -4,6 +4,7 @@ import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 
+import org.yubing.datmv.core.DataType;
 import org.yubing.datmv.core.PageReader;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordPage;
@@ -63,13 +64,11 @@ public class ExcelReader implements PageReader {
 			for (int c = 0; c < colSize; c++) {
 				Cell cell = sheet.getCell(c, readLine);
 				String cellContents = cell.getContents();
-				SimpleDataField cellData = new SimpleDataField();
-				String key = "" + c;
-				cellData.setName("" + c);
-				cellData.setType(cell.getType().toString());
+				
+				SimpleDataField cellData = new SimpleDataField(String.valueOf(c), DataType.STRING);
 				cellData.setData(cellContents);
 
-				record.addDataField(key, cellData);
+				record.addDataField(cellData.getName(), cellData);
 			}
 
 			page.writeRecord(record);

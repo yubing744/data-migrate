@@ -49,18 +49,21 @@ public class ConsolePagePreview implements PagePreview {
 	private void previewHeader(RecordPage recPage) {
 		if (recPage != null) {
 			recPage.reset();
+			
 			if (recPage.hasNext()) {
 				Record record = recPage.readRecord();
 
 				StringBuilder sb = new StringBuilder();
+				
 				if (record != null) {
 					Set<String> keys = record.keySet();
 					for (Iterator<String> it = keys.iterator(); it.hasNext();) {
 						String key = it.next();
 						DataField dataField = record.getDataField(key);
-						sb.append(dataField.getName()).append("\t\t\t");
+						sb.append(dataField.getName()).append("\t");
 					}
 				}
+				
 				System.out.println(sb);
 			}
 		}
@@ -68,16 +71,21 @@ public class ConsolePagePreview implements PagePreview {
 
 	public void preview(Record record) {
 		StringBuilder sb = new StringBuilder();
+		
 		if (record != null) {
 			Set<String> keys = record.keySet();
 			for (Iterator<String> it = keys.iterator(); it.hasNext();) {
 				String key = it.next();
 				DataField dataField = record.getDataField(key);
-				String shortContent = regularData(dataField.getData());
-
-				sb.append(shortContent).append("\t\t");
+				if (dataField != null) {
+					String shortContent = regularData(String.valueOf(dataField.getData()));
+					sb.append(shortContent).append("\t");
+				} else {
+					sb.append("<null>").append("\t");
+				}
 			}
 		}
+		
 		System.out.println(sb);
 	}
 

@@ -22,7 +22,7 @@ public class JdbcConstructorArgParser implements ArgmentsParser {
 	public static final String ATTR_PASSWORD = "password";
 
 	public static final String ATTR_TABLE_NAME = "table-name";
-	public static final String ATTR_BASE_SQL = "base-sql";
+	public static final String ATTR_SQL = "sql";
 	public static final String ATTR_DIALECT_CLASS = "dialect";
 
 	public Object[] parserArgs(XmlMigrateConfig xmlMigrateConfig, Element element) {
@@ -41,15 +41,7 @@ public class JdbcConstructorArgParser implements ArgmentsParser {
 		String tableName = DocumentUtils.findAttrByName(element,
 				ATTR_TABLE_NAME);
 
-		String baseSql = DocumentUtils.findAttrByName(element, ATTR_BASE_SQL);
-
-		if (StringUtils.isBlank(tableName) && StringUtils.isBlank(baseSql)) {
-			throw new RuntimeException("Error in paser " + element
-					+ ", must config "
-					+ new String[] { ATTR_TABLE_NAME, ATTR_BASE_SQL } + " one.");
-		}
-
-		return new Object[] { dataSource, dialect, tableName, baseSql };
+		return new Object[] { dataSource, dialect, tableName};
 	}
 
 	/**
@@ -58,7 +50,7 @@ public class JdbcConstructorArgParser implements ArgmentsParser {
 	 * @param element
 	 * @return
 	 */
-	private DataSource parserDataSource(Element dataSourceEle) {
+	protected DataSource parserDataSource(Element dataSourceEle) {
 		DataSource ds = null;
 		if (dataSourceEle != null) {
 			ds = new DataSource();

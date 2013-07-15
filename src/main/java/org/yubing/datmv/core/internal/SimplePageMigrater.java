@@ -44,6 +44,7 @@ public class SimplePageMigrater implements PageMigrater, RecordFilter {
 
 	public RecordPage migrate(RecordPage recPage, MigrateContext migrateContext) {
 		RecordPage resultPage = null;
+		
 		if (recPage != null && recordMigrater != null) {
 			resultPage = new SimpleRecordPage();
 			recPage.reset();
@@ -54,6 +55,7 @@ public class SimplePageMigrater implements PageMigrater, RecordFilter {
 			while (recPage.hasNext()) {
 				Record source = recPage.readRecord();
 				Record target = filterRecord(source, context);
+				
 				if (target != null) {
 					resultPage.writeRecord(target);
 				} else {
@@ -61,23 +63,25 @@ public class SimplePageMigrater implements PageMigrater, RecordFilter {
 				}
 			}
 		}
+		
 		return resultPage;
 	}
 
-	public Record filter(Record source, PageContext context,
-			FilterChain chain) {
+	public Record filter(Record source, PageContext context, FilterChain chain) {
 		return recordMigrater.migrate(source, context);
 	}
 
 	protected Record filterRecord(Record source, PageContext context) {
 		MigrateConfig migrateConfig = context.getMigrateConfig();
 		List<RecordFilter> filters = migrateConfig.getRecordFilters();
+		
 		if (filters != null && !filters.isEmpty()) {
 			FilterChain chain = new SimpleFilterChain(filters, this);
 			source = chain.filter(source, context);
 		} else {
 			source = this.filter(source, context, null);
 		}
+		
 		return source;
 	}
 

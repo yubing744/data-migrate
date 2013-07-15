@@ -26,19 +26,12 @@ public interface DataField {
 	 * 
 	 * @return
 	 */
-	String getData();
-
-	/**
-	 * 设置数据类型
-	 * 
-	 * @param type
-	 */
-	void setType(String type);
+	Object getData();
 
 	/**
 	 * 设置数据
 	 * 
 	 * @param data
 	 */
-	void setData(String data);
+	void setData(Object data);
 }

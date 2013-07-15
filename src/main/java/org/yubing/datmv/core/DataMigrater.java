@@ -110,6 +110,7 @@ public class DataMigrater {
 	public void migrate(int pageNum, boolean previewMode, boolean preview) {
 		try {
 			MigrateConfig migrateConfig = context.getMigrateConfig();
+			
 			if (checkMigrateConfig(migrateConfig)) {
 				context.setAttribute("page.size", this.pageSize);
 
@@ -224,10 +225,12 @@ public class DataMigrater {
 		MigrateConfig migrateConfig = context.getMigrateConfig();
 		context.setAttribute("event", event);
 		List<MigrateListener> listeners = migrateConfig.getMigrateListeners();
+		
 		if (listeners != null && !listeners.isEmpty()) {
 			for (Iterator<MigrateListener> it = listeners.iterator(); it
 					.hasNext();) {
 				MigrateListener migrateListener = it.next();
+				
 				if (migrateListener != null) {
 					try {
 						migrateListener.onEvent(context);

@@ -25,8 +25,10 @@ public class ConfigItemsParser implements ConfigParser {
 	public static final String TAG_TYPE = "item";
 
 	public static final String ATTR_MAPPING_KEY = "mapping-key";
+	public static final String ATTR_MAPPING_TYPE = "mapping-type";
+	
 	public static final String ATTR_HANDLER = "handler";
-
+	
 	public void parse(XmlMigrateConfig xmlMigrateConfig, Element itemsEle) {
 		if (itemsEle != null) {
 			NodeList itemsList = itemsEle.getElementsByTagName(TAG_TYPE);
@@ -61,21 +63,32 @@ public class ConfigItemsParser implements ConfigParser {
 			}
 			configItem.setType(type);
 
+			String value = DocumentUtils.findAttrByName(itemEle, ATTR_VALUE);
+			if (!StringUtils.isBlank(value)) {
+				configItem.setValue(value);
+			}
+			
 			String mappingKey = DocumentUtils.findAttrByName(itemEle,
 					ATTR_MAPPING_KEY);
 			if (!StringUtils.isBlank(mappingKey)) {
 				configItem.setMappingKey(mappingKey);
 			}
 
+			String mappingType = DocumentUtils.findAttrByName(itemEle,
+					ATTR_MAPPING_TYPE);
+			if (!StringUtils.isBlank(mappingType)) {
+				configItem.setMappingType(mappingType);
+			}
+			
 			MappingHandler mappingHandler = parseMappingHandler(
 					xmlMigrateConfig, itemEle);
 			if (mappingHandler != null) {
 				configItem.setMappingHandler(mappingHandler);
 			}
 
-			if (StringUtils.isBlank(mappingKey) && mappingHandler == null) {
+			if (StringUtils.isBlank(mappingKey) && mappingHandler == null && configItem.getValue() == null) {
 				throw new RuntimeException("Error in paser " + itemEle + ", "
-						+ ATTR_MAPPING_KEY + " and " + ATTR_HANDLER
+						+ ATTR_MAPPING_KEY + " or " + ATTR_HANDLER + " or " + ATTR_VALUE
 						+ " must have one.");
 			}
 

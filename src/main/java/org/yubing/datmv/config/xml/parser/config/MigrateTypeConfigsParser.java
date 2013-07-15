@@ -19,8 +19,11 @@ public class MigrateTypeConfigsParser implements ConfigParser {
 	public static final String TAG_TYPE = "migrate-type";
 	public static final String TAG_READER_CLASS = "reader";
 	public static final String TAG_WRITER_CLASS = "writer";
+	
 	public static final String TAG_CONSTRUCTOR_ARG_PARSER_CLASS = "constructor-arg-parser";
-
+	public static final String TAG_READER_CONSTRUCTOR_ARG_PARSER_CLASS = "reader-constructor-arg-parser";
+	public static final String TAG_WRITER_CONSTRUCTOR_ARG_PARSER_CLASS = "writer-constructor-arg-parser";
+	
 	public void parse(XmlMigrateConfig xmlMigrateConfig, Element typesEle) {
 		if (typesEle != null) {
 			NodeList typeList = typesEle.getElementsByTagName(TAG_TYPE);
@@ -63,6 +66,21 @@ public class MigrateTypeConfigsParser implements ConfigParser {
 				typeConfig.setConstructorArgParser(clazz);
 			}
 
+			
+			argParserEle = DocumentUtils.findOneElementByTagName(
+					typeEle, TAG_READER_CONSTRUCTOR_ARG_PARSER_CLASS);
+			if (argParserEle != null) {
+				String clazz = argParserEle.getAttribute(ATTR_CLASS);
+				typeConfig.setReaderConstructorArgParser(clazz);
+			}
+			
+			argParserEle = DocumentUtils.findOneElementByTagName(
+					typeEle, TAG_WRITER_CONSTRUCTOR_ARG_PARSER_CLASS);
+			if (argParserEle != null) {
+				String clazz = argParserEle.getAttribute(ATTR_CLASS);
+				typeConfig.setWriterConstructorArgParser(clazz);
+			}
+			
 			xmlMigrateConfig.addMigrateTypeConfig(typeConfig.getName(),
 					typeConfig);
 		}

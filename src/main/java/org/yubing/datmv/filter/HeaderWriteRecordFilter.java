@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.yubing.datmv.core.ConfigItem;
 import org.yubing.datmv.core.DataField;
+import org.yubing.datmv.core.DataType;
 import org.yubing.datmv.core.FilterChain;
 import org.yubing.datmv.core.MigrateConfig;
 import org.yubing.datmv.core.PageContext;
@@ -63,8 +64,7 @@ public class HeaderWriteRecordFilter implements RecordFilter {
 
 				String destName = field.getName();
 
-				DataField headerField = new SimpleDataField(destName);
-				headerField.setType("string");
+				DataField headerField = new SimpleDataField(destName, DataType.STRING);
 				headerField.setData(destName);
 				header.addDataField(destName, headerField);
 			}
@@ -83,14 +83,14 @@ public class HeaderWriteRecordFilter implements RecordFilter {
 				String destName = configItem.getName();
 
 				if (destName != null) {
-					DataField headerField = new SimpleDataField(destName);
-					headerField.setType("string");
+					DataField headerField = new SimpleDataField(destName, DataType.STRING);
 					headerField.setData(destName);
 					header.addDataField(destName, headerField);
 				}
 			}
 			return header;
 		}
+		
 		return null;
 	}
 

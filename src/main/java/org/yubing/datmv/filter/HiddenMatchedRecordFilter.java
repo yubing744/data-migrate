@@ -20,9 +20,12 @@ public class HiddenMatchedRecordFilter implements RecordFilter {
 		if (source != null) {
 			DataField field = source.getDataField(datakey);
 			if (field != null) {
-				String data = field.getData();
-				if (data != null && data.trim().matches(regex)) {
-					return null;
+				Object data = field.getData();
+				if (data != null && data instanceof String) {
+					String strData = (String)data;
+					if (strData.trim().matches(regex)) {
+						return null;
+					}
 				}
 			}
 		}

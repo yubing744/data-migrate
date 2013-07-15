@@ -31,14 +31,14 @@ public class JavaScriptMappingHandler implements MappingHandler {
 	}
 
 	public DataField mapFrom(DataField targetField, RecordContext context) {
-		String data = targetField.getData();
+		Object data = targetField.getData();
 		
 		Map<String, Object> content = new HashMap<String, Object>();
 		content.put("context", context);
 		content.put("data", data);
 
 		Object val = evaler.evaluate(content, script);
-		targetField.setData("" + val);
+		targetField.setData(val);
 
 		return targetField;
 	}

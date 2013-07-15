@@ -1,11 +1,13 @@
 package org.yubing.datmv.type.jdbc;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.yubing.datmv.core.DataType;
 import org.yubing.datmv.core.PageReader;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordPage;
@@ -26,44 +28,63 @@ public class JdbcReader implements PageReader {
 	private String tableName;
 
 	private DBHelper dbHelper;
+	private String type;
 	private String baseSql;
-	private String querySql;
+	private String sql;
 
 	private Dialect dialect;
 	private String dialectClass;
 	
 	private int curLine = 0;
 	private int totalLine;
+	
+	private Map<Class<?>, String> supportTypes = new HashMap<Class<?>, String>();
 
-	public JdbcReader(DataSource dataSource,  String dialectClass, String tableName) {
+
+	public JdbcReader(DataSource dataSource,  String dialectClass, String type, String typeVal) {
 		this.dataSource = dataSource;
 		this.dialectClass = dialectClass;
-		this.tableName = tableName;
-		this.querySql = null;
 		
+		this.type = type;
+		
+		if ("table".equals(type)) {
+			this.tableName = typeVal;
+		} else {
+			this.sql = typeVal;
+		}
+		
+		init();
 	}
 
-	public JdbcReader(DataSource dataSource,  String dialectClass, String tableName, String querySql) {
-		this.dataSource = dataSource;
-		this.dialectClass = dialectClass;
-		this.tableName = tableName;
-		this.querySql = querySql;
+	protected void init() {
+		supportTypes.put(String.class, DataType.STRING);
+		
+		supportTypes.put(Short.class, DataType.SHORT);
+		supportTypes.put(Integer.class, DataType.INTEGER);
+		supportTypes.put(Long.class, DataType.LONG);
+		supportTypes.put(Float.class, DataType.FLOAT);
+		supportTypes.put(Double.class, DataType.DOUBLE);
+		
+		supportTypes.put(Character.class, DataType.CHARACTER);
+		supportTypes.put(Boolean.class, DataType.BOOLEAN);
 	}
-
+	
+	
 	public void open() {
 		dbHelper = new DBHelper(dataSource);
 		dialect = (Dialect)ReflectUtils.newInstance(dialectClass);
 		
-		baseSql = querySql;
-		if (StringUtils.isBlank(baseSql)) {
-			baseSql = "select * from " + this.tableName;
+		if ("table".equals(type)) {
+			baseSql = "select * from `" + this.tableName + "`";
+		} else {
+			baseSql = sql;
 		}
 
 		totalLine = findTotalLine();
 	}
 
 	protected int findTotalLine() {
-		String countSql = "select count(*) from " + this.tableName;
+		String countSql = "select count(t.id) from (" + this.baseSql + ") t";
 		String numStr = dbHelper.querySingleData(countSql);
 		int totalLine = Integer.parseInt(numStr);
 		return totalLine;
@@ -83,30 +104,42 @@ public class JdbcReader implements PageReader {
 
 		RecordPage page = new SimpleRecordPage(pageSize);
 
-		String sql = dialect.buildPageQuery(this.baseSql, startLine, endLine);
-		List<Map<String, String>> dataPage = dbHelper.query(sql);
+		String sql = dialect.buildPageQuery(this.baseSql, startLine, pageSize);
+		List<Map<String, Object>> dataPage = dbHelper.queryBySQL(sql);
 
 		int readSize = dataPage.size();
 		if (dataPage != null) {
 			for (int readLine = 0; readLine < readSize; readLine++) {
 				Record record = new SimpleRecord();
 
-				Map<String, String> datas = dataPage.get(readLine);
+				Map<String, Object> datas = dataPage.get(readLine);
 				if (datas != null) {
-					for (Iterator<Entry<String, String>> it = datas.entrySet()
+					for (Iterator<Entry<String, Object>> it = datas.entrySet()
 							.iterator(); it.hasNext();) {
-						Entry<String, String> entry = it.next();
+						Entry<String, Object> entry = it.next();
 						String key = entry.getKey();
-						String contents = entry.getValue();
+						Object contents = entry.getValue();
 
-						SimpleDataField cellData = new SimpleDataField();
-						cellData.setName(key);
-						cellData.setType("string");
-						cellData.setData(contents);
-
+						SimpleDataField cellData = null;
+						
+						if (contents != null) {
+							String type = supportTypes.get(contents.getClass());
+							if (type != null) {
+								cellData = new SimpleDataField(key, type);
+								cellData.setData(contents);
+							} else {
+								cellData = new SimpleDataField(key, DataType.STRING);
+								cellData.setData(contents);	
+							}
+						} else {
+							cellData = new SimpleDataField(key, DataType.STRING);
+							cellData.setData(null);
+						}
+						
 						record.addDataField(key, cellData);
 					}
 				}
+				
 				page.writeRecord(record);
 			}
 

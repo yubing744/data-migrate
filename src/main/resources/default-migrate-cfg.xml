@@ -12,8 +12,11 @@
 		</migrate-type>
 		<migrate-type name="jdbc">
 			<reader class="org.yubing.datmv.type.jdbc.JdbcReader" />
+			<reader-constructor-arg-parser
+				class="org.yubing.datmv.config.xml.parser.argment.JdbcReaderConstructorArgParser" />
+				
 			<writer class="org.yubing.datmv.type.jdbc.JdbcWriter" />
-			<constructor-arg-parser
+			<writer-constructor-arg-parser
 				class="org.yubing.datmv.config.xml.parser.argment.JdbcConstructorArgParser" />
 		</migrate-type>
 		<migrate-type name="mem.map">
