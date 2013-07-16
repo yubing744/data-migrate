@@ -6,8 +6,8 @@ import org.yubing.datmv.config.xml.ArgmentsParser;
 import org.yubing.datmv.config.xml.MigrateTypeConfig;
 import org.yubing.datmv.config.xml.XmlMigrateConfig;
 import org.yubing.datmv.core.PageWriter;
-import org.yubing.datmv.util.ConfigUtils;
 import org.yubing.datmv.util.ReflectUtils;
+import org.yubing.datmv.util.config.ConfigUtils;
 
 /**
  * 描述

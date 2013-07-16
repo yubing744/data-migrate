@@ -223,8 +223,7 @@ public class XmlMigrateConfig extends AbstractMigrateConfig {
 		getParsers().put("preview-types", new PreviewTypeConfigsParser());
 		getParsers().put("mapping-handlers", new MappingHandlersConfigParser());
 		getParsers().put("record-filters", new RecordFilterConfigsParser());
-		getParsers().put("migrate-listeners",
-				new MigrateListenerConfigsParser());
+		getParsers().put("migrate-listeners", new MigrateListenerConfigsParser());
 
 		getParsers().put("source", new TypeSourceParser());
 		getParsers().put("target", new TypeTargetParser());
@@ -253,8 +252,12 @@ public class XmlMigrateConfig extends AbstractMigrateConfig {
 	public void parseXmlConfig(String xmlConfig) {
 		if (!StringUtils.isBlank(xmlConfig)) {
 			InputStream is = ResourceUtils.openResource(xmlConfig);
-			Document doc = DocumentUtils.parseStream(is);
-			parseConfig(doc);
+			if (is != null) {
+				Document doc = DocumentUtils.parseStream(is);
+				parseConfig(doc);
+			} else {
+				throw new RuntimeException(xmlConfig + " not found!");
+			}
 		}
 	}
 

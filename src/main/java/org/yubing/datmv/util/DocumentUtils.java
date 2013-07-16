@@ -13,6 +13,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.yubing.datmv.util.config.ConfigUtils;
 
 /**
  * W3C DOM Utils
@@ -107,9 +108,11 @@ public class DocumentUtils {
 	 */
 	public static Element findOneElementByTagName(Element parent, String tagName) {
 		NodeList nodeList = parent.getElementsByTagName(tagName);
+		
 		if (nodeList != null && nodeList.getLength() > 0) {
 			return (Element) nodeList.item(0);
 		}
+		
 		return null;
 	}
 
@@ -121,13 +124,28 @@ public class DocumentUtils {
 	 * @return
 	 */
 	public static String findAttrByName(Element ele, String attrName) {
+		return findAttrByName(ele, attrName, new String[]{"value"});
+	}
+	
+	public static String findAttrByName(Element ele, String attrName,
+			String[] attrTypes) {
 		String attrVal = ele.getAttribute(attrName);
+		
 		if (attrVal == null || attrVal.trim().equals("")) {
 			Element attrEle = findOneElementByTagName(ele, attrName);
+			
 			if (attrEle != null) {
-				attrVal = attrEle.getAttribute("value");
+				for (int i = 0; i < attrTypes.length; i++) {
+					attrVal = attrEle.getAttribute(attrTypes[i]);
+					if (attrVal!=null && attrVal.trim().length()>0) break;
+				}
 			}
 		}
+		
+		if (attrVal != null) {
+			attrVal = ConfigUtils.handleRefVal(attrVal);
+		}
+		
 		return attrVal;
 	}
 	
@@ -139,13 +157,14 @@ public class DocumentUtils {
 	 * @return
 	 */
 	public static String findTextContentByName(Element ele, String attrName) {
-		String attrVal = ele.getAttribute(attrName);
-		if (attrVal == null || attrVal.trim().equals("")) {
-			Element attrEle = findOneElementByTagName(ele, attrName);
-			if (attrEle != null) {
-				attrVal = attrEle.getTextContent();
-			}
+		Element attrEle = findOneElementByTagName(ele, attrName);
+		
+		if (attrEle != null) {
+			return attrEle.getTextContent();
 		}
-		return attrVal;
+		
+		return null;
 	}
+
+
 }

@@ -15,7 +15,6 @@ public class SimpleConfigItem implements ConfigItem {
 	private String type;
 	
 	private String mappingKey;
-	private String mappingType;
 	
 	private MappingHandler mappingHandler;
 	
@@ -58,14 +57,6 @@ public class SimpleConfigItem implements ConfigItem {
 
 	public void setMappingHandler(MappingHandler mappingHandler) {
 		this.mappingHandler = mappingHandler;
-	}
-
-	public String getMappingType() {
-		return mappingType;
-	}
-
-	public void setMappingType(String mappingType) {
-		this.mappingType = mappingType;
 	}
 
 	public String getValue() {

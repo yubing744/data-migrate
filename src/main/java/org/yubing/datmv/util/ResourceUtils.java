@@ -46,13 +46,15 @@ public class ResourceUtils {
 	 */
 	public static InputStream openResourceFromFile(String filePath) {
 		InputStream is = null;
+		
 		if (!StringUtils.isBlank(filePath)) {
 			try {
 				is = new BufferedInputStream(new FileInputStream(filePath));
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				return null;
 			}
 		}
+		
 		return is;
 	}
 

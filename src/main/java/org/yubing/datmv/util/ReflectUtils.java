@@ -1,6 +1,13 @@
 package org.yubing.datmv.util;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Java 反射工具
@@ -10,6 +17,8 @@ import java.lang.reflect.Constructor;
  */
 public class ReflectUtils {
 
+	protected static final String EXT_CLASSPATH = System.getProperty("user.dir") + "/libs/";
+
 	/**
 	 * 根据类名创建类实例
 	 * 
@@ -18,7 +27,7 @@ public class ReflectUtils {
 	 */
 	public static Object newInstance(String clazz) {
 		try {
-			Class<?> implClazz = Class.forName(clazz);
+			Class<?> implClazz = loadClass(new String[]{EXT_CLASSPATH}, clazz);
 			return implClazz.newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -26,6 +35,49 @@ public class ReflectUtils {
 		}
 	}
 
+	public static Class<?> loadClass(String[] classPaths, String clazz) {
+		URLClassLoader ucl = null;
+		 
+		try {
+			List<URL> urls = new ArrayList<URL>();
+			
+			for (int i = 0; i < classPaths.length; i++) {
+				File file = new File(classPaths[i]);
+				if (file.isDirectory()) {
+					File[] jars = file.listFiles(new FilenameFilter(){
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".jar");
+						}
+					});
+					
+					for (int j = 0; j < jars.length; j++) {
+						urls.add(jars[j].toURI().toURL());
+					}
+				} else {
+					urls.add(file.toURI().toURL());
+				}
+			}
+
+		    ucl = new URLClassLoader(urls.toArray(new URL[urls.size()]));
+			return ucl.loadClass(clazz);
+		} catch (Exception e) {
+			try {
+				return Class.forName(clazz);
+			} catch (ClassNotFoundException e1) {
+				e1.printStackTrace();
+				throw new RuntimeException(clazz + "加载失败", e);
+			}
+		} finally {
+			if (ucl != null) {
+				try {
+					ucl.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	/**
 	 * 根据类名创建类实例, 带构造参数
 	 * 
@@ -35,7 +87,7 @@ public class ReflectUtils {
 	 */
 	public static Object newInstance(String clazz, Object[] args) {
 		try {
-			Class<?> implClazz = Class.forName(clazz);
+			Class<?> implClazz = loadClass(new String[]{EXT_CLASSPATH}, clazz);
 			Constructor<?> constructor = findMatchedConstructor(implClazz, args);
 			return constructor.newInstance(args);
 		} catch (Exception e) {

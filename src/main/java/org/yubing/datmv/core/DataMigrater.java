@@ -3,8 +3,10 @@ package org.yubing.datmv.core;
 import java.util.Iterator;
 import java.util.List;
 
-import org.yubing.datmv.util.ConfigUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.yubing.datmv.util.config.ConfigInitialer;
+import org.yubing.datmv.util.config.ConfigUtils;
 import org.yubing.datmv.util.config.Configuration;
 
 /**
@@ -13,6 +15,8 @@ import org.yubing.datmv.util.config.Configuration;
  * Author: Wu Cong-Wen Date: 2011-7-9
  */
 public class DataMigrater {
+	
+	private static final Log log = LogFactory.getLog(DataMigrater.class);
 	
 	public static final int DEFAULT_MIGRATE_PAGE_SIZE = 16;
 	
@@ -149,15 +153,16 @@ public class DataMigrater {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("migrate error!", e);
 			migrateLog.log(e.getMessage());
+			throw new RuntimeException("migrate error!", e);
 		}
 	}
 
 	/**
 	 * 预览第几页数据
 	 * 
-	 */
+	 */ 
 	public void preview(int pageNum) {
 		fireEvent("BeginPreview");
 		this.migrate(pageNum, true, true);

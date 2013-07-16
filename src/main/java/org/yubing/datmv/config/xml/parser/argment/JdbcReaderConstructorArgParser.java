@@ -6,25 +6,24 @@ import org.yubing.datmv.config.xml.XmlMigrateConfig;
 import org.yubing.datmv.util.DataSource;
 import org.yubing.datmv.util.DocumentUtils;
 
+/**
+ *	JDBC Reader构造参数解析器
+ *
+ * @author Wu CongWen
+ * @email yubing744@163.com
+ * @date 2013-7-16
+ */
 public class JdbcReaderConstructorArgParser extends JdbcConstructorArgParser {
 
 	@Override
 	public Object[] parserArgs(XmlMigrateConfig xmlMigrateConfig,
 			Element element) {
-		Element dataSourceEle = DocumentUtils.findOneElementByTagName(element,
-				TAG_DATA_SOURCE);
-		DataSource dataSource = parserDataSource(dataSourceEle);
-		if (dataSource == null) {
-			throw new RuntimeException("Error in paser " + element
-					+ ", not found " + TAG_DATA_SOURCE);
-		}
+		Object[] args = super.parserArgs(xmlMigrateConfig, element);
 
-		String dialect = DocumentUtils.findAttrByName(element,
-				ATTR_DIALECT_CLASS);
-
-		String tableName = DocumentUtils.findAttrByName(element,
-				ATTR_TABLE_NAME);
-
+		DataSource dataSource = (DataSource)args[0];
+		String dialectClass = (String)args[1];
+		String tableName = (String)args[2];
+		
 		String sql = DocumentUtils.findTextContentByName(element, ATTR_SQL);
 
 		if (StringUtils.isBlank(tableName) && StringUtils.isBlank(sql)) {
@@ -33,9 +32,9 @@ public class JdbcReaderConstructorArgParser extends JdbcConstructorArgParser {
 		}
 
 		if (StringUtils.isBlank(sql)) {
-			return new Object[] { dataSource, dialect, "table", tableName};
+			return new Object[] { dataSource, dialectClass, "table", tableName};
 		} else {
-			return new Object[] { dataSource, dialect, "sql", sql};
+			return new Object[] { dataSource, dialectClass, "sql", sql};
 		}
 	}
 

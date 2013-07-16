@@ -19,19 +19,19 @@ public class Configuration {
 	private static AtomicBoolean initialized = new AtomicBoolean();
 
 	private Configuration() {
+		
 	}
 
 	public static Configuration getInstance() {
-
 		if (initialized.compareAndSet(false, true)) {
 			gConfig = new Configuration();
 			gConfig.initialize();
 		}
+		
 		return gConfig;
 	}
 
 	public static void putValue(String key, String value) {
-
 		getInstance().configMap.put(key, value);
 	}
 

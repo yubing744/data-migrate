@@ -13,7 +13,7 @@ import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordFilter;
 import org.yubing.datmv.core.RecordMigrater;
 import org.yubing.datmv.core.RecordPage;
-import org.yubing.datmv.util.ConfigUtils;
+import org.yubing.datmv.util.config.ConfigUtils;
 
 /**
  * 描述

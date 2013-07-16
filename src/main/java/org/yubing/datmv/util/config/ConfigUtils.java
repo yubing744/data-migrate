@@ -1,9 +1,9 @@
-package org.yubing.datmv.util;
+package org.yubing.datmv.util.config;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.yubing.datmv.util.config.Configuration;
+import org.yubing.datmv.util.ReflectUtils;
 
 /**
  * 描述
@@ -39,9 +39,13 @@ public class ConfigUtils {
 		while (matcher.find()) {
 			String val = matcher.group(1);
 			String replaceVal = Configuration.getValue(val);
-			replaceVal = replaceVal.replaceAll("\\\\", "\\/");
 			if (replaceVal != null) {
-				value = value.replaceFirst("\\$\\{" + val + "\\}", replaceVal);
+				replaceVal = replaceVal.replaceAll("\\\\", "\\/");
+				if (replaceVal != null) {
+					value = value.replaceFirst("\\$\\{" + val + "\\}", replaceVal);
+				}
+			} else {
+				throw new RuntimeException("ref for ${" + val + "} not define!");
 			}
 		}
 

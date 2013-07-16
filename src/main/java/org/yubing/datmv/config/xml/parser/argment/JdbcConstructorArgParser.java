@@ -26,7 +26,6 @@ public class JdbcConstructorArgParser implements ArgmentsParser {
 	public static final String ATTR_DIALECT_CLASS = "dialect";
 
 	public Object[] parserArgs(XmlMigrateConfig xmlMigrateConfig, Element element) {
-
 		Element dataSourceEle = DocumentUtils.findOneElementByTagName(element,
 				TAG_DATA_SOURCE);
 		DataSource dataSource = parserDataSource(dataSourceEle);
@@ -35,13 +34,13 @@ public class JdbcConstructorArgParser implements ArgmentsParser {
 					+ ", not found " + TAG_DATA_SOURCE);
 		}
 
-		String dialect = DocumentUtils.findAttrByName(element,
-				ATTR_DIALECT_CLASS);
+		String dialectClass = DocumentUtils.findAttrByName(element,
+				ATTR_DIALECT_CLASS, new String[]{"value", "type"});
 
 		String tableName = DocumentUtils.findAttrByName(element,
 				ATTR_TABLE_NAME);
 
-		return new Object[] { dataSource, dialect, tableName};
+		return new Object[] { dataSource, dialectClass, tableName};
 	}
 
 	/**

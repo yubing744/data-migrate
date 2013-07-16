@@ -3,17 +3,21 @@ package org.yubing.datmv.mapping.handler;
 
 import java.util.Date;
 
-import org.apache.commons.lang.time.FastDateFormat;
 import org.yubing.datmv.core.DataField;
 import org.yubing.datmv.core.MappingHandler;
 import org.yubing.datmv.core.RecordContext;
 
+/**
+ *	当前时间映射处理器
+ *
+ * @author Wu CongWen
+ * @email yubing744@163.com
+ * @date 2013-7-16
+ */
 public class CurrentDateMappingHandler implements MappingHandler {
 
-	FastDateFormat formatter = FastDateFormat.getInstance("yyyy-MM-dd");
-	
 	public DataField mapFrom(DataField targetField, RecordContext context) {
-		targetField.setData(formatter.format(new Date()));
+		targetField.setData(new Date());
 		return targetField;
 	}
 }
