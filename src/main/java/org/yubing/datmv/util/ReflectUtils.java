@@ -9,6 +9,8 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.yubing.datmv.util.config.Configuration;
+
 /**
  * Java 反射工具
  * 
@@ -27,11 +29,21 @@ public class ReflectUtils {
 	 */
 	public static Object newInstance(String clazz) {
 		try {
-			Class<?> implClazz = loadClass(new String[]{EXT_CLASSPATH}, clazz);
+			Class<?> implClazz = loadClass(buildClassPaths(), clazz);
 			return implClazz.newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(clazz + "加载失败", e);
+		}
+	}
+
+	protected static String[] buildClassPaths() {
+		String classPaths = Configuration.getValue("plugin.lib.paths");
+		
+		if (classPaths != null && classPaths.length() > 0) {
+			return classPaths.split(";");
+		} else {
+			return new String[]{EXT_CLASSPATH};
 		}
 	}
 
@@ -43,18 +55,21 @@ public class ReflectUtils {
 			
 			for (int i = 0; i < classPaths.length; i++) {
 				File file = new File(classPaths[i]);
-				if (file.isDirectory()) {
-					File[] jars = file.listFiles(new FilenameFilter(){
-						public boolean accept(File dir, String name) {
-							return name.endsWith(".jar");
+				
+				if (file.exists()) {
+					if (file.isDirectory()) {
+						File[] jars = file.listFiles(new FilenameFilter(){
+							public boolean accept(File dir, String name) {
+								return name.endsWith(".jar");
+							}
+						});
+						
+						for (int j = 0; j < jars.length; j++) {
+							urls.add(jars[j].toURI().toURL());
 						}
-					});
-					
-					for (int j = 0; j < jars.length; j++) {
-						urls.add(jars[j].toURI().toURL());
+					} else {
+						urls.add(file.toURI().toURL());
 					}
-				} else {
-					urls.add(file.toURI().toURL());
 				}
 			}
 
@@ -79,7 +94,7 @@ public class ReflectUtils {
 	 */
 	public static Object newInstance(String clazz, Object[] args) {
 		try {
-			Class<?> implClazz = loadClass(new String[]{EXT_CLASSPATH}, clazz);
+			Class<?> implClazz = loadClass(buildClassPaths(), clazz);
 			Constructor<?> constructor = findMatchedConstructor(implClazz, args);
 			return constructor.newInstance(args);
 		} catch (Exception e) {
