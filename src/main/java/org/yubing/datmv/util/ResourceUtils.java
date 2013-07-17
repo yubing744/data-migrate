@@ -66,9 +66,9 @@ public class ResourceUtils {
 	 */
 	public static InputStream openResourceFromClasspath(String classpath) {
 		if (!StringUtils.isBlank(classpath)) {
-			InputStream is = ResourceUtils.class.getResourceAsStream(classpath);
-			return is;
+			return ReflectUtils.getResourceAsStream(classpath);
 		}
+		
 		return null;
 	}
 }

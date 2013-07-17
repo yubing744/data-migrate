@@ -117,7 +117,8 @@ public class DataMigrater {
 			
 			if (checkMigrateConfig(migrateConfig)) {
 				context.setAttribute("page.size", this.pageSize);
-
+				fireEvent("migrate.start");
+				
 				PagePreview pagePreview = this.pagePreview;
 				PageReader pageReader = migrateConfig.getSourceReader();
 				PageWriter pageWriter = migrateConfig.getTargetWriter();
@@ -131,20 +132,30 @@ public class DataMigrater {
 					int pageCount = 1;
 					while (pageReader.hasNext() && pageCount <= pageNum) {
 						context.setAttribute("cur.page.num", pageCount);
+						
+						fireEvent("migrate.page.start");
+						
 						RecordPage page = pageReader.readPage(this.pageSize);
 
-						if (pageCount == pageNum
-								|| pageNum == Integer.MAX_VALUE) {
-							RecordPage targetPage = migrate(page, previewMode
-									|| preview);
-
+						if (pageCount == pageNum || pageNum == Integer.MAX_VALUE) {
+							
+							fireEvent("read.page.start");
+							RecordPage targetPage = migrate(page, previewMode || preview);
+							fireEvent("read.page.start");
+							
 							if (targetPage != null && !previewMode) {
+								fireEvent("write.page.start");
 								pageWriter.writePage(targetPage);
+								fireEvent("write.page.start");
 							}
 						}
 
+						fireEvent("migrate.page.end");
+						
 						pageCount++;
 					}
+					
+					fireEvent("migrate.end");
 				} finally {
 					pagePreview.release();
 					pageReader.release();
@@ -164,9 +175,7 @@ public class DataMigrater {
 	 * 
 	 */ 
 	public void preview(int pageNum) {
-		fireEvent("BeginPreview");
 		this.migrate(pageNum, true, true);
-		fireEvent("EndPreview");
 	}
 
 	/**
@@ -181,9 +190,7 @@ public class DataMigrater {
 	 * 执行迁移第某页数据
 	 */
 	public void migrate(int pageNum) {
-		fireEvent("BeginMigrate");
 		this.migrate(pageNum, false, true);
-		fireEvent("BeginMigrate");
 	}
 
 	/**
@@ -226,9 +233,8 @@ public class DataMigrater {
 	 * 
 	 * @param event
 	 */
-	protected void fireEvent(String event) {
+	protected void fireEvent(String eventName) {
 		MigrateConfig migrateConfig = context.getMigrateConfig();
-		context.setAttribute("event", event);
 		List<MigrateListener> listeners = migrateConfig.getMigrateListeners();
 		
 		if (listeners != null && !listeners.isEmpty()) {
@@ -238,7 +244,7 @@ public class DataMigrater {
 				
 				if (migrateListener != null) {
 					try {
-						migrateListener.onEvent(context);
+						migrateListener.onEvent(eventName, context);
 					} catch (Exception e) {
 						e.printStackTrace();
 						migrateLog.log("Error in Listener:" + migrateListener);

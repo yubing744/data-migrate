@@ -9,8 +9,7 @@ public class LogListener implements MigrateListener {
 
 	private MigrateLog migrateLog = MigrateLogFactory.getMigrateLog();
 
-	public void onEvent(MigrateContext context) {
-		String event = (String)context.getAttribute("event");
-		migrateLog.log(event);
+	public void onEvent(String eventName, MigrateContext context) {
+		migrateLog.log(eventName);
 	}
 }

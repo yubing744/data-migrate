@@ -13,5 +13,5 @@ public interface MigrateListener {
 	 * 
 	 * @param context
 	 */
-	void onEvent(MigrateContext context);
+	void onEvent(String eventName, MigrateContext context);
 }
