@@ -67,15 +67,7 @@ public class ReflectUtils {
 				e1.printStackTrace();
 				throw new RuntimeException(clazz + "加载失败", e);
 			}
-		} finally {
-			if (ucl != null) {
-				try {
-					ucl.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		} 
 	}
 	
 	/**
