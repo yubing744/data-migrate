@@ -1,0 +1,39 @@
+<migrate-config>
+	<source type="jdbc">
+		<data-source>
+			<driver-class value="${source.jdbc.driverClass}"/>
+			<url value="${source.jdbc.jdbcUrl}"/>
+			<username value="${source.jdbc.user}"/>
+			<password value="${source.jdbc.password}"/>
+		</data-source>
+		<dialect type="org.yubing.datmv.type.jdbc.dialect.MySqlDialect"/>
+		<table-name value="user"/>
+	</source>
+	
+	<target type="jdbc">
+		<data-source>
+			<driver-class value="${target.jdbc.driverClass}"/>
+			<url value="${target.jdbc.jdbcUrl}"/>
+			<username value="${target.jdbc.user}"/>
+			<password value="${target.jdbc.password}"/>
+		</data-source>
+		<dialect type="org.yubing.datmv.type.jdbc.dialect.MySqlDialect"/>
+		<table-name value="user_identity"/>
+	</target>
+
+	<config-items>
+		<item name="user_iduser" type="int" mapping-key="id"/>
+		
+		<item name="group_idgroup" type="int">
+			<handler type="me.weos.datmv.handler.HeadZoneToGroupIDMappingHandler"/>
+		</item>
+		
+		<item name="level" type="int" value="65"/>
+		<item name="state" type="int" value="1"/>
+		
+		<item name="ts_create" type="date" handler="now"/>
+	</config-items>
+	
+	<listener value="log"/>
+			
+</migrate-config>

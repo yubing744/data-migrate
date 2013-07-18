@@ -24,6 +24,8 @@ public class MigrateTypeConfigsParser implements ConfigParser {
 	public static final String TAG_READER_CONSTRUCTOR_ARG_PARSER_CLASS = "reader-constructor-arg-parser";
 	public static final String TAG_WRITER_CONSTRUCTOR_ARG_PARSER_CLASS = "writer-constructor-arg-parser";
 	
+	public static final String TAG_PROPERTIY_PARSER_CLASS = "property-parser";
+	
 	public void parse(XmlMigrateConfig xmlMigrateConfig, Element typesEle) {
 		if (typesEle != null) {
 			NodeList typeList = typesEle.getElementsByTagName(TAG_TYPE);
@@ -79,6 +81,13 @@ public class MigrateTypeConfigsParser implements ConfigParser {
 			if (argParserEle != null) {
 				String clazz = argParserEle.getAttribute(ATTR_CLASS);
 				typeConfig.setWriterConstructorArgParser(clazz);
+			}
+			
+			Element propParserEle = DocumentUtils.findOneElementByTagName(
+					typeEle, TAG_PROPERTIY_PARSER_CLASS);
+			if (propParserEle != null) {
+				String clazz = propParserEle.getAttribute(ATTR_CLASS);
+				typeConfig.setPropertyParser(clazz);
 			}
 			
 			xmlMigrateConfig.addMigrateTypeConfig(typeConfig.getName(),

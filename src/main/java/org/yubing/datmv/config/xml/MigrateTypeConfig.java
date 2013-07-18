@@ -31,6 +31,7 @@ public class MigrateTypeConfig {
 	
 	private String writerConstructorArgParser = null;
 	
+	private String propertyParser = null;
 
 	public MigrateTypeConfig(String name) {
 		super();
@@ -81,4 +82,13 @@ public class MigrateTypeConfig {
 	public void setConstructorArgParser(String constructorArgParser) {
 		this.constructorArgParser = constructorArgParser;
 	}
+
+	public void setPropertyParser(String propertyParser) {
+		this.propertyParser = propertyParser;
+	}
+
+	public String getPropertyParser() {
+		return propertyParser;
+	}
+	
 }

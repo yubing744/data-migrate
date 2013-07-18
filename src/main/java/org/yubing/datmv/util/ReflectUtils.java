@@ -33,7 +33,6 @@ public class ReflectUtils {
 			Class<?> implClazz = loadClass(clazz);
 			return implClazz.newInstance();
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new RuntimeException(clazz + "加载失败", e);
 		}
 	}

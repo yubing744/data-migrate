@@ -252,6 +252,7 @@ public class XmlMigrateConfig extends AbstractMigrateConfig {
 	public void parseXmlConfig(String xmlConfig) {
 		if (!StringUtils.isBlank(xmlConfig)) {
 			InputStream is = ResourceUtils.openResource(xmlConfig);
+			
 			if (is != null) {
 				Document doc = DocumentUtils.parseStream(is);
 				parseConfig(doc);

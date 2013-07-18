@@ -41,12 +41,12 @@ public class TypeTargetParser extends MigrateTypeParser {
 					}
 				}
 				
-				parseType(xmlMigrateConfig, typeConfig, args);
+				parseType(xmlMigrateConfig, sourceEle, typeConfig, args);
 			}
 		}
 	}
 	
-	public void parseType(XmlMigrateConfig xmlMigrateConfig,
+	public void parseType(XmlMigrateConfig xmlMigrateConfig, Element sourceEle,
 			MigrateTypeConfig typeConfig, Object[] args) {
 		String writerClass = typeConfig.getWriter();
 		if (!StringUtils.isBlank(writerClass)) {

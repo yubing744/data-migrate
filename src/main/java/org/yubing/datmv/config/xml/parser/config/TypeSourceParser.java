@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Element;
 import org.yubing.datmv.config.xml.ArgmentsParser;
 import org.yubing.datmv.config.xml.MigrateTypeConfig;
+import org.yubing.datmv.config.xml.PropertyParser;
 import org.yubing.datmv.config.xml.XmlMigrateConfig;
 import org.yubing.datmv.core.PageReader;
 import org.yubing.datmv.util.ReflectUtils;
@@ -40,12 +41,12 @@ public class TypeSourceParser extends MigrateTypeParser {
 					}
 				}
 				
-				parseType(xmlMigrateConfig, typeConfig, args);
+				parseType(xmlMigrateConfig, sourceEle, typeConfig, args);
 			}
 		}
 	}
 	
-	public void parseType(XmlMigrateConfig xmlMigrateConfig,
+	public void parseType(XmlMigrateConfig xmlMigrateConfig, Element sourceEle,
 			MigrateTypeConfig typeConfig, Object[] args) {
 		String readerClass = typeConfig.getReader();
 		if (!StringUtils.isBlank(readerClass)) {
@@ -54,6 +55,17 @@ public class TypeSourceParser extends MigrateTypeParser {
 			if (sourceReader != null) {
 				xmlMigrateConfig.setSourceReader(sourceReader);
 			}
+			
+			String propParserClass = typeConfig.getPropertyParser();
+
+			if (!StringUtils.isBlank(propParserClass)) {
+				PropertyParser propParser = (PropertyParser) ReflectUtils
+						.newInstance(propParserClass);
+				if (propParser != null) {
+					propParser.parserProperties(xmlMigrateConfig, sourceReader, sourceEle);
+				}
+			}
+			
 		}
 	}
 }

@@ -9,6 +9,7 @@
 		<migrate-type name="csv">
 			<reader class="org.yubing.datmv.type.csv.CsvReader" />
 			<writer class="org.yubing.datmv.type.csv.CsvWriter" />
+			<property-parser class="org.yubing.datmv.config.xml.parser.property.CSVTypePropertyParser" />
 		</migrate-type>
 		<migrate-type name="jdbc">
 			<reader class="org.yubing.datmv.type.jdbc.JdbcReader" />

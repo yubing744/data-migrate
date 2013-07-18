@@ -1,0 +1,28 @@
+<migrate-config>
+	<!-- 总部下部门数据源   -->
+	<source type="jdbc">
+		<data-source>
+			<driver-class value="${target.jdbc.driverClass}"/>
+			<url value="${target.jdbc.jdbcUrl}"/>
+			<username value="${target.jdbc.user}"/>
+			<password value="${target.jdbc.password}"/>
+		</data-source>
+		<dialect value="org.yubing.datmv.type.jdbc.dialect.MySqlDialect"/>
+		
+		<!-- 总部的GroupID 为9 -->
+		<sql>
+			<![CDATA[	
+				select * from enterprise_organization where parent=9
+			]]>
+		</sql>
+	</source>
+
+	<config-items>
+		<!-- 总部下部门名称 -->
+		<item name="key" type="string" mapping-key="name"/>
+		
+		<!-- 总部下部门ID -->
+		<item name="value" type="int" mapping-key="id" />
+	</config-items>
+	
+</migrate-config>

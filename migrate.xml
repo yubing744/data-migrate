@@ -1,15 +1,11 @@
-<migrate-tasks default="task4">
+<migrate-configs>
 
-	<migrate-task name="task1" depends="" migrate-config="classpath:/data/mvconfig/sample1-cfg.xml"/>
+	<migrate-task name="to_weos_user" depends="" migrate-config="mvconfig/lenovo_train_user_to_weos_user.mvcfg.xml"/>
 	
-	<migrate-task name="task2" depends="" migrate-config="classpath:/data/mvconfig/sample2-cfg.xml"/>
-	
-	<migrate-task name="task3" depends="task1, task2">
-		<echo>start</echo>
-		<migrate-config include="classpath:/data/mvconfig/sample3-cfg.xml"/>
-		<echo>end</echo>
+	<migrate-task name="to_weos_identity_user" depends="">
+		<echo>开始迁移用户数据！</echo>
+		<migrate-config include="mvconfig/lenovo_train_user_to_weos_identity_user.mvcfg.xml"/>
+		<echo>结束迁移用户数据！</echo>
 	</migrate-task>
 	
-	<migrate-task name="task4" depends="task3" migrate-config="classpath:/data/mvconfig/sample4-cfg.xml"/>
-	
-</migrate-tasks>
+</migrate-configs>

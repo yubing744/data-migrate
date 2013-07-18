@@ -37,11 +37,11 @@ public abstract class MigrateTypeParser implements ConfigParser {
 					}
 				}
 
-				parseType(xmlMigrateConfig, typeConfig, args);
+				parseType(xmlMigrateConfig, sourceEle, typeConfig, args);
 			}
 		}
 	}
 
-	public abstract void parseType(XmlMigrateConfig xmlMigrateConfig,
+	public abstract void parseType(XmlMigrateConfig xmlMigrateConfig, Element sourceEle,
 			MigrateTypeConfig typeConfig, Object[] args);
 }

@@ -23,7 +23,15 @@ public class CsvReader implements PageReader {
 
 	private String csvPath;
 	private BufferedReader br;
+	
 	private String curLineText;
+
+	private boolean hasHeader;
+	private String[] headers;
+	
+	public void setHasHeader(boolean hasHeader) {
+		this.hasHeader = hasHeader;
+	}
 
 	public CsvReader(String path) {
 		this.csvPath = path;
@@ -34,6 +42,10 @@ public class CsvReader implements PageReader {
 			InputStream is = ResourceUtils.openResource(csvPath);
 			br = new BufferedReader(new InputStreamReader(is));
 			curLineText = null;
+			
+			if (this.hasHeader) {
+				this.headers = readLineDatas();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error in open " + csvPath, e);
@@ -47,19 +59,23 @@ public class CsvReader implements PageReader {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
 			if (curLineText == null) {
 				return false;
 			}
 		}
+		
 		return true;
 	}
 
 	private String[] readLineDatas() {
 		String[] datas = null;
+		
 		if (hasNext()) {
 			datas = curLineText.split(",");
 			curLineText = null;
 		}
+		
 		return datas;
 	}
 
@@ -77,7 +93,12 @@ public class CsvReader implements PageReader {
 				for (int c = 0; c < colSize; c++) {
 					String contents = datas[c];
 					
-					SimpleDataField cellData = new SimpleDataField(String.valueOf(c), DataType.STRING);
+					String key = String.valueOf(c);
+					if (this.hasHeader) {
+						key = this.headers[c];
+					}
+					
+					SimpleDataField cellData = new SimpleDataField(key, DataType.STRING);
 					 
 					if (contents.startsWith("\"") && contents.endsWith("\"")) {
 						cellData.setData(contents.substring(1, contents
@@ -88,9 +109,9 @@ public class CsvReader implements PageReader {
 
 					record.addDataField(cellData.getName(), cellData);
 				}
+				
+				page.writeRecord(record);
 			}
-			
-			page.writeRecord(record);
 		}
 
 		return page;

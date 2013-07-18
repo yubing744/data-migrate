@@ -43,9 +43,10 @@ public class DataMigrateHelper {
 	public static<K,V> Map<K, V> loadMap(String config) {
 		Map<K, V> map = new HashMap<K, V>();
 		
+		DataMigrater dm = new DataMigrater();
 		XmlMigrateConfig xmc = new XmlMigrateConfig(config);
+		dm.setMigrateConfig(xmc);
 		xmc.setTargetWriter(new MapWriter<K, V>(map));
-		DataMigrater dm = DataMigrateHelper.buildFrom(xmc);
 		dm.migrate();
 		
 		return map;

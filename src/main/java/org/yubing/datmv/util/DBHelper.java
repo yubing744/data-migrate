@@ -237,7 +237,7 @@ public class DBHelper {
 				
 				for (int i = 1; i <= rsmd.getColumnCount(); i++) {// 每循环一次是一列
 					// 列名
-					String key = rsmd.getColumnName(i);
+					String key = rsmd.getColumnLabel(i);
 					// 对应于当前行，当前列的数据
 					
 					try {
