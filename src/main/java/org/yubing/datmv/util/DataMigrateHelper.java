@@ -1,11 +1,12 @@
 package org.yubing.datmv.util;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.yubing.datmv.config.xml.XmlMigrateConfig;
 import org.yubing.datmv.core.DataMigrater;
 import org.yubing.datmv.core.MigrateConfig;
+import org.yubing.datmv.type.mem.list.map.ListMapWriter;
 import org.yubing.datmv.type.mem.map.MapWriter;
 
 public class DataMigrateHelper {
@@ -41,14 +42,37 @@ public class DataMigrateHelper {
 	 * @return
 	 */
 	public static<K,V> Map<K, V> loadMap(String config) {
-		Map<K, V> map = new HashMap<K, V>();
+		MapWriter<K, V> map = new MapWriter<K, V>();
 		
 		DataMigrater dm = new DataMigrater();
 		XmlMigrateConfig xmc = new XmlMigrateConfig(config);
 		dm.setMigrateConfig(xmc);
-		xmc.setTargetWriter(new MapWriter<K, V>(map));
+		xmc.setTargetWriter(map);
 		dm.migrate();
 		
 		return map;
+	}
+
+	/**
+	 * 加载表数据
+	 * 
+	 * @param config
+	 * @return
+	 */
+	public static List<Map<String, Object>> loadListMap(String config, Map<String, String> params) {
+		ListMapWriter writer = new ListMapWriter();
+		
+		DataMigrater dm = new DataMigrater();
+		dm.addParameters(params);
+		XmlMigrateConfig xmc = new XmlMigrateConfig(config);
+		dm.setMigrateConfig(xmc);
+		xmc.setTargetWriter(writer);
+		dm.migrate();
+		
+		return writer;
+	}
+	
+	public static List<Map<String, Object>> loadListMap(String config) {
+		return loadListMap(config, null);
 	}
 }

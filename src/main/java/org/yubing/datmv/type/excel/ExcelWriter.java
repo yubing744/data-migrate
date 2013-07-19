@@ -14,6 +14,7 @@ import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
 import org.yubing.datmv.core.DataField;
+import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageWriter;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordPage;
@@ -36,10 +37,9 @@ public class ExcelWriter implements PageWriter {
 
 	public ExcelWriter(String filePath) {
 		this.excelPath = filePath;
-		this.open();
 	}
 
-	public void open() {
+	public void open(MigrateContext context) {
 		try {
 			File file = new File(this.excelPath);
 			if (!file.exists()) {

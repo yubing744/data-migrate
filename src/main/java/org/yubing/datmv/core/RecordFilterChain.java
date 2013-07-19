@@ -6,7 +6,7 @@ package org.yubing.datmv.core;
  * @Author: Wu Cong-Wen
  * @Date: 2011-7-12
  */
-public interface FilterChain {
+public interface RecordFilterChain {
 	
 	/**
 	 * 过滤

@@ -4,19 +4,14 @@ import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.yubing.datmv.config.xml.ConfigParser;
 import org.yubing.datmv.config.xml.FilterConfig;
 import org.yubing.datmv.config.xml.XmlMigrateConfig;
 import org.yubing.datmv.util.DocumentUtils;
 
-/**
- * 记录过滤器配置解析器
- * 
- * @Author: Wu Cong-Wen
- * @Date: 2011-7-11
- */
-public class RecordFilterConfigsParser extends FilterConfigsParser {
+public class PageFilterConfigsParser extends FilterConfigsParser {
 
-	public static final String TAG_TYPE = "record-filter";
+	public static final String TAG_TYPE = "page-filter";
 	public static final String TAG_FILTER_CLASS = "filter";
 	public static final String TAG_CONSTRUCTOR_ARG_PARSER_CLASS = "constructor-arg-parser";
 
@@ -29,14 +24,14 @@ public class RecordFilterConfigsParser extends FilterConfigsParser {
 				Node node = typeList.item(i);
 				if (node instanceof Element) {
 					Element subEle = (Element) node;
-					parseRecordFilter(xmlMigrateConfig, subEle);
+					parsePageFilter(xmlMigrateConfig, subEle);
 				}
 			}
 		}
 	}
 
-	public void parseRecordFilter(XmlMigrateConfig xmlMigrateConfig, Element ele) {
-		String name = ele.getAttribute(ATTR_KEY);
+	public void parsePageFilter(XmlMigrateConfig xmlMigrateConfig, Element ele) {
+		String name = ele.getAttribute(ConfigParser.ATTR_KEY);
 		if (!StringUtils.isBlank(name)) {
 			FilterConfig config = new FilterConfig(name);
 
@@ -54,7 +49,8 @@ public class RecordFilterConfigsParser extends FilterConfigsParser {
 				config.setConstructorArgParser(clazz);
 			}
 
-			xmlMigrateConfig.addRecordFilterConfig(config.getName(), config);
+			xmlMigrateConfig.addPageFilterConfig(config.getName(), config);
 		}
 	}
 }
+

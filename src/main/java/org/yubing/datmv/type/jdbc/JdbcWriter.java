@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.yubing.datmv.core.DataField;
+import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageWriter;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordPage;
@@ -45,7 +46,7 @@ public class JdbcWriter implements PageWriter {
 		this.dialectClass = dialectClass;
 	}
 
-	public void open() {
+	public void open(MigrateContext context) {
 		dbHelper = new DBHelper(dataSource);
 		dialect = (Dialect)ReflectUtils.newInstance(dialectClass);
 		

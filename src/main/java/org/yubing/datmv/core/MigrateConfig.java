@@ -51,4 +51,11 @@ public interface MigrateConfig {
 	 * @return
 	 */
 	PagePreview getPagePreview();
+
+	/**
+	 * 获取页面过滤器
+	 * 
+	 * @return
+	 */
+	List<PageFilter> getPageFilters();
 }

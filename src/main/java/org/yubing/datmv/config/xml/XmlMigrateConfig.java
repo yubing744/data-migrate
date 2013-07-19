@@ -12,16 +12,18 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.yubing.datmv.config.AbstractMigrateConfig;
 import org.yubing.datmv.config.xml.parser.config.ConfigItemsParser;
+import org.yubing.datmv.config.xml.parser.config.FilterParser;
 import org.yubing.datmv.config.xml.parser.config.MappingHandlersConfigParser;
 import org.yubing.datmv.config.xml.parser.config.MigrateListenerConfigsParser;
 import org.yubing.datmv.config.xml.parser.config.MigrateListenerParser;
 import org.yubing.datmv.config.xml.parser.config.MigrateTypeConfigsParser;
+import org.yubing.datmv.config.xml.parser.config.PageFilterConfigsParser;
 import org.yubing.datmv.config.xml.parser.config.PagePreviewParser;
 import org.yubing.datmv.config.xml.parser.config.PreviewTypeConfigsParser;
 import org.yubing.datmv.config.xml.parser.config.RecordFilterConfigsParser;
-import org.yubing.datmv.config.xml.parser.config.RecordFilterParser;
 import org.yubing.datmv.config.xml.parser.config.TypeSourceParser;
 import org.yubing.datmv.config.xml.parser.config.TypeTargetParser;
+import org.yubing.datmv.core.PageFilter;
 import org.yubing.datmv.util.DocumentUtils;
 import org.yubing.datmv.util.ResourceUtils;
 
@@ -39,7 +41,8 @@ public class XmlMigrateConfig extends AbstractMigrateConfig {
 	protected Map<String, MigrateTypeConfig> migrateTypeConfigs;
 	protected Map<String, PreviewTypeConfig> previewTypeConfigs;
 	protected Map<String, MappingHandlerConfig> mappingHandlerConfigs;
-	protected Map<String, RecordFilterConfig> recordFilterConfigs;
+	protected Map<String, FilterConfig> recordFilterConfigs;
+	protected Map<String, FilterConfig> pageFilterConfigs;
 	protected Map<String, MigrateListenerConfig> migrateListenerConfigs;
 
 	public XmlMigrateConfig() {
@@ -85,9 +88,9 @@ public class XmlMigrateConfig extends AbstractMigrateConfig {
 		return mappingHandlerConfigs;
 	}
 
-	public Map<String, RecordFilterConfig> getRecordFilterConfigs() {
+	public Map<String, FilterConfig> getRecordFilterConfigs() {
 		if (recordFilterConfigs == null) {
-			recordFilterConfigs = new HashMap<String, RecordFilterConfig>();
+			recordFilterConfigs = new HashMap<String, FilterConfig>();
 		}
 		return recordFilterConfigs;
 	}
@@ -169,18 +172,34 @@ public class XmlMigrateConfig extends AbstractMigrateConfig {
 	 * @param configParser
 	 */
 	public void addRecordFilterConfig(String name,
-			RecordFilterConfig recordFilterConfig) {
-		getRecordFilterConfigs().put(name, recordFilterConfig);
+			FilterConfig config) {
+		getRecordFilterConfigs().put(name, config);
 	}
 
+	
 	/**
 	 * 获取记录过滤器配置
 	 * 
 	 * @param typeName
 	 * @return
 	 */
-	public RecordFilterConfig getRecordFilterConfig(String name) {
+	public FilterConfig getRecordFilterConfig(String name) {
 		return getRecordFilterConfigs().get(name);
+	}
+	
+	public FilterConfig getPageFilterConfig(String name) {
+		return getPageFilterConfigs().get(name);
+	}
+	
+	public void addPageFilterConfig(String name, FilterConfig config) {
+		this.getPageFilterConfigs().put(name, config);
+	}
+	
+	private Map<String, FilterConfig> getPageFilterConfigs() {
+		if (pageFilterConfigs == null) {
+			pageFilterConfigs = new HashMap<String, FilterConfig>();
+		}
+		return pageFilterConfigs;
 	}
 
 	/**
@@ -222,6 +241,7 @@ public class XmlMigrateConfig extends AbstractMigrateConfig {
 		getParsers().put("migrate-types", new MigrateTypeConfigsParser());
 		getParsers().put("preview-types", new PreviewTypeConfigsParser());
 		getParsers().put("mapping-handlers", new MappingHandlersConfigParser());
+		getParsers().put("page-filters", new PageFilterConfigsParser());
 		getParsers().put("record-filters", new RecordFilterConfigsParser());
 		getParsers().put("migrate-listeners", new MigrateListenerConfigsParser());
 
@@ -230,7 +250,7 @@ public class XmlMigrateConfig extends AbstractMigrateConfig {
 		getParsers().put("preview", new PagePreviewParser());
 		getParsers().put("config-items", new ConfigItemsParser());
 
-		getParsers().put("filter", new RecordFilterParser());
+		getParsers().put("filter", new FilterParser());
 		getParsers().put("listener", new MigrateListenerParser());
 	}
 
@@ -325,4 +345,12 @@ public class XmlMigrateConfig extends AbstractMigrateConfig {
 			}
 		}
 	}
+
+	
+
+	
+
+	
+
+	
 }

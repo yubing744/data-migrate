@@ -13,4 +13,12 @@ public interface RecordPage extends DataReader, DataWriter {
 	 * @return
 	 */
 	int pageSize();
+
+	/**
+	 * 读取一列数据
+	 * 
+	 * @param fieldName
+	 * @return
+	 */
+	Object[] getFieldDatas(String fieldName);
 }

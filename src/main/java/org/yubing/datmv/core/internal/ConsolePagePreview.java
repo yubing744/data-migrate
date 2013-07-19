@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.yubing.datmv.core.DataField;
+import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PagePreview;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordPage;
@@ -26,7 +27,7 @@ public class ConsolePagePreview implements PagePreview {
 				"preview.item.split.bytewidth", DEFAULT_SPLIT_BYTE_WIDTH);
 	}
 
-	public void open() {
+	public void open(MigrateContext context) {
 		
 	}
 

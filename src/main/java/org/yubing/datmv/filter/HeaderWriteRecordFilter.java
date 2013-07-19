@@ -7,8 +7,9 @@ import java.util.Set;
 import org.yubing.datmv.core.ConfigItem;
 import org.yubing.datmv.core.DataField;
 import org.yubing.datmv.core.DataType;
-import org.yubing.datmv.core.FilterChain;
+import org.yubing.datmv.core.RecordFilterChain;
 import org.yubing.datmv.core.MigrateConfig;
+import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageContext;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordFilter;
@@ -18,7 +19,7 @@ import org.yubing.datmv.core.internal.SimpleRecord;
 
 public class HeaderWriteRecordFilter implements RecordFilter {
 
-	public Record filter(Record source, PageContext context, FilterChain chain) {
+	public Record filter(Record source, PageContext context, RecordFilterChain chain) {
 
 		Integer pageNum = (Integer) context.getAttribute("cur.page.num");
 		Boolean hasWrited = (Boolean) context
@@ -92,6 +93,16 @@ public class HeaderWriteRecordFilter implements RecordFilter {
 		}
 		
 		return null;
+	}
+
+	public void init(MigrateContext context) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void destroy() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

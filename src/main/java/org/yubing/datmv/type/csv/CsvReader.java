@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.yubing.datmv.core.DataType;
+import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageReader;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordPage;
@@ -37,7 +38,7 @@ public class CsvReader implements PageReader {
 		this.csvPath = path;
 	}
 
-	public void open() {
+	public void open(MigrateContext context) {
 		try {
 			InputStream is = ResourceUtils.openResource(csvPath);
 			br = new BufferedReader(new InputStreamReader(is));

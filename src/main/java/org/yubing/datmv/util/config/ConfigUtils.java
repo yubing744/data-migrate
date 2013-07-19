@@ -1,5 +1,6 @@
 package org.yubing.datmv.util.config;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,13 +33,24 @@ public class ConfigUtils {
 	 * @return
 	 */
 	public static String handleRefVal(String value) {
+		return handleRefVal(Configuration.rawMap(), value);
+	}
+	
+	/**
+	 * 处理值应用
+	 * 
+	 * @param context
+	 * @param value
+	 * @return
+	 */
+	public static String handleRefVal(Map<String, String> context, String value) {
 		String captureKeyAndConstraint = "\\$\\{([a-zA-Z_0-9.]+)\\}";
 
 		Matcher matcher = Pattern.compile(captureKeyAndConstraint).matcher(
 				value);
 		while (matcher.find()) {
 			String val = matcher.group(1);
-			String replaceVal = Configuration.getValue(val);
+			String replaceVal = context.get(val);
 			if (replaceVal != null) {
 				replaceVal = replaceVal.replaceAll("\\\\", "\\/");
 				if (replaceVal != null) {
@@ -51,5 +63,4 @@ public class ConfigUtils {
 
 		return value;
 	}
-	
 }

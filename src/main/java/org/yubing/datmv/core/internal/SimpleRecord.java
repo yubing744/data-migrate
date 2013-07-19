@@ -39,4 +39,13 @@ public class SimpleRecord implements Record {
 		return this.getFileds().toString();
 	}
 
+	public Object getFieldData(String key) {
+		DataField df = this.getDataField(key);
+		if (df != null) {
+			return df.getData();
+		}
+		
+		return null;
+	}
+
 }

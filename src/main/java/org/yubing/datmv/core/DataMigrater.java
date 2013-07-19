@@ -2,9 +2,12 @@ package org.yubing.datmv.core;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.yubing.datmv.core.internal.SimplePageFilterChain;
 import org.yubing.datmv.util.config.ConfigInitialer;
 import org.yubing.datmv.util.config.ConfigUtils;
 import org.yubing.datmv.util.config.Configuration;
@@ -69,6 +72,35 @@ public class DataMigrater {
 	}
 
 	/**
+	 * 添加属性
+	 * 
+	 * @param attrs
+	 */
+	public void addAttributes(Map<String, Object> attrs) {
+		if (this.context != null && attrs != null) {
+			for (Iterator<Entry<String, Object>> it = attrs.entrySet().iterator(); it.hasNext();) {
+				Entry<String, Object> entry = it.next();
+				
+				if (entry != null && entry.getKey() != null) {
+					this.context.setAttribute(entry.getKey(), entry.getValue());
+				}
+			}
+		}
+	}
+	
+	public void addParameters(Map<String, String> params) {
+		if (this.context != null && params != null) {
+			for (Iterator<Entry<String, String>> it = params.entrySet().iterator(); it.hasNext();) {
+				Entry<String, String> entry = it.next();
+				
+				if (entry != null && entry.getKey() != null) {
+					this.context.setParameter(entry.getKey(), entry.getValue());
+				}
+			}
+		}
+	}
+	
+	/**
 	 * 设置数据迁移配置
 	 * 
 	 * @param migrateConfig
@@ -97,7 +129,7 @@ public class DataMigrater {
 			pagePreview.preview(page);
 		}
 
-		RecordPage targetPage = pageMigrater.migrate(page, context);
+		RecordPage targetPage = filterPage(page, context);
 
 		if (preview) {
 			pagePreview.title("Preview Target Page " + curPageNum + " ("
@@ -106,6 +138,30 @@ public class DataMigrater {
 		}
 
 		return targetPage;
+	}
+
+	private RecordPage filterPage(RecordPage source, MigrateContext context) {
+		RecordPage target = null;
+		
+		final PageMigrater pageMigrater = this.pageMigrater;
+		
+		List<PageFilter> filters = context.getMigrateConfig().getPageFilters();
+		if (filters != null && !filters.isEmpty()) {
+			PageFilterChain chain = new SimplePageFilterChain(filters, new PageFilter(){
+				public void init(MigrateContext context) {}
+
+				public RecordPage filter(RecordPage source, MigrateContext context, PageFilterChain chain) {
+					return pageMigrater.migrate(source, context);
+				}
+
+				public void destroy() {}
+			});
+			target = chain.filter(source, context);
+		} else {
+			target = pageMigrater.migrate(source, context);
+		}
+		
+		return target;
 	}
 
 	/**
@@ -119,16 +175,21 @@ public class DataMigrater {
 				context.setAttribute("page.size", this.pageSize);
 				fireEvent("migrate.start");
 				
+				PageMigrater pageMigrater = this.pageMigrater;
 				PagePreview pagePreview = this.pagePreview;
+				
 				PageReader pageReader = migrateConfig.getSourceReader();
 				PageWriter pageWriter = migrateConfig.getTargetWriter();
-
+				List<PageFilter> filters = migrateConfig.getPageFilters();
+				
 				try {
-					pagePreview.open();
-					pageReader.open();
+					pagePreview.open(context);
+					pageReader.open(context);
 					if (!previewMode)
-						pageWriter.open();
-
+						pageWriter.open(context);
+					pageMigrater.init(context);
+					initPageFilters(filters, context);
+					
 					int pageCount = 1;
 					while (pageReader.hasNext() && pageCount <= pageNum) {
 						context.setAttribute("cur.page.num", pageCount);
@@ -161,12 +222,22 @@ public class DataMigrater {
 					pageReader.release();
 					if (!previewMode)
 						pageWriter.release();
+					pageMigrater.destroy();
 				}
 			}
 		} catch (Exception e) {
 			log.error("migrate error!", e);
 			migrateLog.log(e.getMessage());
 			throw new RuntimeException("migrate error!", e);
+		}
+	}
+
+	private void initPageFilters(List<PageFilter> filters, MigrateContext context) {
+		if (filters != null && !filters.isEmpty()) {
+			for (Iterator<PageFilter> it = filters.iterator(); it.hasNext();) {
+				PageFilter pageFilter = (PageFilter) it.next();
+				pageFilter.init(context);
+			}
 		}
 	}
 
@@ -253,4 +324,6 @@ public class DataMigrater {
 			}
 		}
 	}
+
+	
 }

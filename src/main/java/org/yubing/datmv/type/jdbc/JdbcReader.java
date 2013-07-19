@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.yubing.datmv.core.DataType;
+import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageReader;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordPage;
@@ -17,6 +18,7 @@ import org.yubing.datmv.core.internal.SimpleRecordPage;
 import org.yubing.datmv.util.DBHelper;
 import org.yubing.datmv.util.DataSource;
 import org.yubing.datmv.util.ReflectUtils;
+import org.yubing.datmv.util.config.ConfigUtils;
 
 /**
  * 通过JDBC读取数据库表记录
@@ -70,7 +72,7 @@ public class JdbcReader implements PageReader {
 	}
 	
 	
-	public void open() {
+	public void open(MigrateContext context) {
 		dbHelper = new DBHelper(dataSource);
 		dialect = (Dialect)ReflectUtils.newInstance(dialectClass);
 		
@@ -80,6 +82,10 @@ public class JdbcReader implements PageReader {
 			baseSql = sql;
 		}
 
+		if (context != null) {
+			baseSql = ConfigUtils.handleRefVal(context.getParameterMap(), baseSql);
+		}
+		
 		totalLine = findTotalLine();
 	}
 

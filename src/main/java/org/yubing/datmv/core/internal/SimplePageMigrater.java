@@ -1,8 +1,9 @@
 package org.yubing.datmv.core.internal;
 
+import java.util.Iterator;
 import java.util.List;
 
-import org.yubing.datmv.core.FilterChain;
+import org.yubing.datmv.core.RecordFilterChain;
 import org.yubing.datmv.core.MigrateConfig;
 import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.MigrateLog;
@@ -26,20 +27,30 @@ public class SimplePageMigrater implements PageMigrater, RecordFilter {
 	private MigrateLog migrateLog = MigrateLogFactory.getMigrateLog();
 
 	private RecordMigrater recordMigrater;
-
+	private List<RecordFilter> filters;
+	
 	public SimplePageMigrater() {
-		init();
+
 	}
 
 	public void setRecordMigrater(RecordMigrater recordMigrater) {
 		this.recordMigrater = recordMigrater;
 	}
 
-	public void init() {
+	public void init(MigrateContext context) {
 		this.recordMigrater = (RecordMigrater) ConfigUtils.newObjectFromConfig(
 				"record.migrater.impl",
 				"org.yubing.datmv.core.internal.SimpleRecordMigrater");
-
+		
+		MigrateConfig migrateConfig = context.getMigrateConfig();
+		this.filters = migrateConfig.getRecordFilters();
+		
+		if (filters != null && !filters.isEmpty()) {
+			for (Iterator<RecordFilter> it = filters.iterator(); it.hasNext();) {
+				RecordFilter recordFilter = (RecordFilter) it.next();
+				recordFilter.init(context);
+			}
+		}
 	}
 
 	public RecordPage migrate(RecordPage recPage, MigrateContext migrateContext) {
@@ -67,22 +78,30 @@ public class SimplePageMigrater implements PageMigrater, RecordFilter {
 		return resultPage;
 	}
 
-	public Record filter(Record source, PageContext context, FilterChain chain) {
+	public Record filter(Record source, PageContext context, RecordFilterChain chain) {
 		return recordMigrater.migrate(source, context);
 	}
 
 	protected Record filterRecord(Record source, PageContext context) {
-		MigrateConfig migrateConfig = context.getMigrateConfig();
-		List<RecordFilter> filters = migrateConfig.getRecordFilters();
+		Record target = null;
 		
 		if (filters != null && !filters.isEmpty()) {
-			FilterChain chain = new SimpleFilterChain(filters, this);
-			source = chain.filter(source, context);
+			RecordFilterChain chain = new SimpleRecordFilterChain(filters, this);
+			target = chain.filter(source, context);
 		} else {
-			source = this.filter(source, context, null);
+			target = this.filter(source, context, null);
 		}
 		
-		return source;
+		return target;
+	}
+
+	public void destroy() {
+		if (filters != null && !filters.isEmpty()) {
+			for (Iterator<RecordFilter> it = filters.iterator(); it.hasNext();) {
+				RecordFilter recordFilter = (RecordFilter) it.next();
+				recordFilter.destroy();
+			}
+		}
 	}
 
 }

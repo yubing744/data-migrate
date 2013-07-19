@@ -5,6 +5,7 @@ import jxl.Sheet;
 import jxl.Workbook;
 
 import org.yubing.datmv.core.DataType;
+import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageReader;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordPage;
@@ -30,7 +31,7 @@ public class ExcelReader implements PageReader {
 		this.excelPath = filePath;
 	}
 
-	public void open() {
+	public void open(MigrateContext context) {
 		try {
 			book = Workbook.getWorkbook(ResourceUtils.openResource(excelPath));
 			sheet = book.getSheet(0);

@@ -1,21 +1,22 @@
 package org.yubing.datmv.type.mem.map;
 
-import java.util.Map;
+import java.util.HashMap;
 
 import org.yubing.datmv.core.DataField;
+import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageWriter;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordPage;
 
-public class MapWriter<K, V> implements PageWriter {
+public class MapWriter<K, V> extends HashMap<K, V> implements PageWriter {
 
+	private static final long serialVersionUID = -3963869873572840466L;
 	public static final String KEY_KEY = "key";
 	public static final String VALUE_KEY = "value";
 
-	private Map<K, V> map;
 
-	public MapWriter(Map<K, V> map) {
-		this.map = map;
+	public MapWriter() {
+
 	}
 
 	public void writePage(RecordPage recPage) {
@@ -33,16 +34,17 @@ public class MapWriter<K, V> implements PageWriter {
 
 	@SuppressWarnings("unchecked")
 	private void writeRecord(Record record) {
-		if (record != null && map != null) {
+		if (record != null) {
 			DataField keyField = record.getDataField(KEY_KEY);
 			DataField valField = record.getDataField(VALUE_KEY);
+			
 			if (keyField != null && valField != null) {
-				map.put((K)keyField.getData(), (V)valField.getData());
+				this.put((K)keyField.getData(), (V)valField.getData());
 			}
 		}
 	}
 
-	public void open() {
+	public void open(MigrateContext context) {
 		// TODO 自动生成方法存根
 
 	}

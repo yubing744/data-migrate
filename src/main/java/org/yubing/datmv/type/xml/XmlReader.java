@@ -1,5 +1,6 @@
 package org.yubing.datmv.type.xml;
 
+import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageReader;
 import org.yubing.datmv.core.RecordPage;
 
@@ -21,7 +22,7 @@ public class XmlReader implements PageReader {
 		return null;
 	}
 
-	public void open() {
+	public void open(MigrateContext context) {
 		// TODO Auto-generated method stub
 
 	}

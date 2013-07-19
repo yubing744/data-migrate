@@ -47,4 +47,12 @@ public interface Record {
 	 * @return
 	 */
 	Set<String> keySet();
+
+	/**
+	 * 获取域数据
+	 * 
+	 * @param key
+	 * @return
+	 */
+	Object getFieldData(String key);
 }

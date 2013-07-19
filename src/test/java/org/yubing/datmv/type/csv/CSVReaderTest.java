@@ -28,7 +28,7 @@ public class CSVReaderTest {
 	@Test
 	public void testReadPage() {
 		try {
-			reader.open();
+			reader.open(null);
 			while (reader.hasNext()) {
 				RecordPage page = reader.readPage(PAGE);
 				System.out.println("page size:" + page.pageSize());

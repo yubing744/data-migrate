@@ -6,7 +6,7 @@ package org.yubing.datmv.config.xml;
  * @Author: Wu Cong-Wen
  * @Date: 2011-7-11
  */
-public class RecordFilterConfig {
+public class FilterConfig {
 
 	/**
 	 * 名称
@@ -24,7 +24,7 @@ public class RecordFilterConfig {
 	 */
 	private String filter;
 
-	public RecordFilterConfig(String name) {
+	public FilterConfig(String name) {
 		this.name = name;
 	}
 

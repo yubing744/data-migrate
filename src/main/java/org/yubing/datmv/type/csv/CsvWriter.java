@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.yubing.datmv.core.DataField;
+import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageWriter;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordPage;
@@ -25,7 +26,7 @@ public class CsvWriter implements PageWriter {
 		this.csvPath = path;
 	}
 
-	public void open() {
+	public void open(MigrateContext context) {
 		try {
 			bw = new BufferedWriter(new FileWriter(csvPath));
 		} catch (Exception e) {

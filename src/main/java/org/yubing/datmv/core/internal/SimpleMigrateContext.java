@@ -14,16 +14,27 @@ import org.yubing.datmv.core.MigrateContext;
  */
 public class SimpleMigrateContext implements MigrateContext {
 
+	private Map<String, String> paramsMap;
 	private Map<String, Object> attrMap;
+	
 	private MigrateConfig migrateConfig;
 
 	protected Map<String, Object> getAttrMap() {
 		if (attrMap == null) {
 			attrMap = new HashMap<String, Object>();
 		}
+		
 		return attrMap;
 	}
 
+	public Map<String, String> getParameterMap() {
+		if (paramsMap == null) {
+			paramsMap = new HashMap<String, String>();
+		}
+		
+		return paramsMap;
+	}
+	
 	public MigrateConfig getMigrateConfig() {
 		return migrateConfig;
 	}
@@ -43,5 +54,13 @@ public class SimpleMigrateContext implements MigrateContext {
 
 	public void setAttribute(String key, Object value) {
 		getAttrMap().put(key, value);
+	}
+	
+	public String getParameter(String key) {
+		return getParameterMap().get(key);
+	}
+	
+	public void setParameter(String key, String value) {
+		getParameterMap().put(key, value);
 	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.yubing.datmv.core.ConfigItem;
 import org.yubing.datmv.core.MigrateConfig;
 import org.yubing.datmv.core.MigrateListener;
+import org.yubing.datmv.core.PageFilter;
 import org.yubing.datmv.core.PagePreview;
 import org.yubing.datmv.core.PageReader;
 import org.yubing.datmv.core.PageWriter;
@@ -25,6 +26,7 @@ public class AbstractMigrateConfig implements MigrateConfig {
 	protected PagePreview pagePreview;
 
 	protected List<RecordFilter> recordFilters;
+	protected List<PageFilter> pageFilters;
 	protected List<MigrateListener> migrateListeners;
 
 	public AbstractMigrateConfig() {
@@ -49,6 +51,15 @@ public class AbstractMigrateConfig implements MigrateConfig {
 		getRecordFilters().add(recordFilter);
 	}
 
+	/**
+	 * 添加分页过滤器
+	 * 
+	 * @param pageFilter
+	 */
+	public void addPageFilter(PageFilter pageFilter) {
+		this.getPageFilters().add(pageFilter);
+	}
+	
 	/**
 	 * 添加数据迁移监听器
 	 * 
@@ -86,6 +97,7 @@ public class AbstractMigrateConfig implements MigrateConfig {
 		if (recordFilters == null) {
 			recordFilters = new ArrayList<RecordFilter>();
 		}
+		
 		return recordFilters;
 	}
 
@@ -93,10 +105,23 @@ public class AbstractMigrateConfig implements MigrateConfig {
 		this.recordFilters = recordFilters;
 	}
 
+	public void setPageFilters(List<PageFilter> pageFilters) {
+		this.pageFilters = pageFilters;
+	}
+
+	public List<PageFilter> getPageFilters() {
+		if (pageFilters == null) {
+			pageFilters = new ArrayList<PageFilter>();
+		}
+		
+		return pageFilters;
+	}
+	
 	public List<MigrateListener> getMigrateListeners() {
 		if (migrateListeners == null) {
 			migrateListeners = new ArrayList<MigrateListener>();
 		}
+		
 		return migrateListeners;
 	}
 
@@ -111,4 +136,6 @@ public class AbstractMigrateConfig implements MigrateConfig {
 	public void setPagePreview(PagePreview pagePreview) {
 		this.pagePreview = pagePreview;
 	}
+
+	
 }

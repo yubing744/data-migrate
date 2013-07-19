@@ -10,7 +10,7 @@ public interface ResourceAccess {
 	/**
 	 * 打开资源
 	 */
-	void open();
+	void open(MigrateContext ctx);
 	
 	/**
 	 * 释放资源

@@ -1,5 +1,6 @@
 package org.yubing.datmv.type.xml;
 
+import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageWriter;
 import org.yubing.datmv.core.RecordPage;
 
@@ -16,7 +17,7 @@ public class XmlWriter implements PageWriter {
 
 	}
 
-	public void open() {
+	public void open(MigrateContext context) {
 		// TODO Auto-generated method stub
 
 	}

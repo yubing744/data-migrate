@@ -10,10 +10,10 @@ import org.w3c.dom.Element;
  */
 public interface ConfigParser {
 
-	static final String ATTR_KEY = "name";
-	static final String ATTR_VALUE = "value";
-	static final String ATTR_CLASS = "class";
-	static final String ATTR_TYPE = "type";
+	public static final String ATTR_KEY = "name";
+	public static final String ATTR_VALUE = "value";
+	public static final String ATTR_CLASS = "class";
+	public static final String ATTR_TYPE = "type";
 	
 	void parse(XmlMigrateConfig xmlMigrateConfig, Element ele);
 }

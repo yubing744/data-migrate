@@ -1,6 +1,7 @@
 package org.yubing.datmv.core.internal;
 
 import org.yubing.datmv.core.DataType;
+import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PagePreview;
 import org.yubing.datmv.core.PageWriter;
 import org.yubing.datmv.core.Record;
@@ -19,9 +20,9 @@ public class PageWriterPreview implements PagePreview {
 		this.pageWriter = pageWriter;
 	}
 
-	public void open() {
+	public void open(MigrateContext context) {
 		if (this.pageWriter != null) {
-			this.pageWriter.open();
+			this.pageWriter.open(context);
 		}
 	}
 

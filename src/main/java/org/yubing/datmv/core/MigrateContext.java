@@ -1,5 +1,7 @@
 package org.yubing.datmv.core;
 
+import java.util.Map;
+
 /**
  * 数据迁移上下文接口
  * 
@@ -36,4 +38,27 @@ public interface MigrateContext {
 	 * @return
 	 */
 	Object getAttribute(String key);
+	
+	
+	/**
+	 * 获取参数
+	 * @param key
+	 * @return
+	 */
+	String getParameter(String key);
+	
+	/**
+	 * 设置参数
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	void setParameter(String key, String value);
+
+	/**
+	 * 获取参数Map
+	 * 
+	 * @return
+	 */
+	Map<String, String> getParameterMap();
 }
