@@ -18,7 +18,7 @@ import org.yubing.datmv.core.RecordFilter;
  * @Author: Wu Cong-Wen
  * @Date: 2011-7-9
  */
-public class AbstractMigrateConfig implements MigrateConfig {
+public abstract class AbstractMigrateConfig implements MigrateConfig {
 
 	protected List<ConfigItem> configItems;
 	protected PageReader sourceReader;

@@ -84,7 +84,7 @@ public class ReflectUtils {
 			}
 		}
 
-		return new URLClassLoader(urls.toArray(new URL[urls.size()]), ReflectUtils.class.getClassLoader());
+		return new URLClassLoader(urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader());
 	}
 	
 	/**

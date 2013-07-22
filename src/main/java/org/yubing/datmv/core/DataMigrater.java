@@ -18,7 +18,7 @@ import org.yubing.datmv.util.config.Configuration;
  * Author: Wu Cong-Wen Date: 2011-7-9
  */
 public class DataMigrater {
-	
+
 	private static final Log log = LogFactory.getLog(DataMigrater.class);
 	
 	public static final int DEFAULT_MIGRATE_PAGE_SIZE = 16;
@@ -36,7 +36,7 @@ public class DataMigrater {
 	private PageMigrater pageMigrater;
 	private PagePreview pagePreview;
 	private int pageSize;
-
+	private boolean preview = true;
 	private MigrateContext context;
 
 	public void init() {
@@ -47,6 +47,7 @@ public class DataMigrater {
 		this.pagePreview = (PagePreview) ConfigUtils.newObjectFromConfig(
 				"page.preview.impl",
 				"org.yubing.datmv.core.internal.ConsolePagePreview");
+		this.preview = Configuration.getBooleanValue("preview.enable");
 		this.migrateLog = MigrateLogFactory.getMigrateLog();
 		this.context = (MigrateContext) ConfigUtils.newObjectFromConfig(
 				"migrate.context.impl",
@@ -107,9 +108,11 @@ public class DataMigrater {
 	 */
 	public void setMigrateConfig(MigrateConfig migrateConfig) {
 		PagePreview pagePreview = migrateConfig.getPagePreview();
+		
 		if (pagePreview != null) {
 			this.pagePreview = pagePreview;
 		}
+		
 		this.context.setMigrateConfig(migrateConfig);
 	}
 
@@ -173,7 +176,7 @@ public class DataMigrater {
 			
 			if (checkMigrateConfig(migrateConfig)) {
 				context.setAttribute("page.size", this.pageSize);
-				fireEvent("migrate.start");
+				fireEvent(MigrateEvents.START);
 				
 				PageMigrater pageMigrater = this.pageMigrater;
 				PagePreview pagePreview = this.pagePreview;
@@ -194,29 +197,29 @@ public class DataMigrater {
 					while (pageReader.hasNext() && pageCount <= pageNum) {
 						context.setAttribute("cur.page.num", pageCount);
 						
-						fireEvent("migrate.page.start");
+						fireEvent(MigrateEvents.PAGE_START);
 						
 						RecordPage page = pageReader.readPage(this.pageSize);
 
 						if (pageCount == pageNum || pageNum == Integer.MAX_VALUE) {
 							
-							fireEvent("read.page.start");
+							fireEvent(MigrateEvents.READ_PAGE_START);
 							RecordPage targetPage = migrate(page, previewMode || preview);
-							fireEvent("read.page.start");
+							fireEvent(MigrateEvents.READ_PAGE_END);
 							
 							if (targetPage != null && !previewMode) {
-								fireEvent("write.page.start");
+								fireEvent(MigrateEvents.WRITE_PAGE_START);
 								pageWriter.writePage(targetPage);
-								fireEvent("write.page.start");
+								fireEvent(MigrateEvents.WRITE_PAGE_END);
 							}
 						}
 
-						fireEvent("migrate.page.end");
+						fireEvent(MigrateEvents.PAGE_END);
 						
 						pageCount++;
 					}
 					
-					fireEvent("migrate.end");
+					fireEvent(MigrateEvents.END);
 				} finally {
 					pagePreview.release();
 					pageReader.release();
@@ -261,7 +264,7 @@ public class DataMigrater {
 	 * 执行迁移第某页数据
 	 */
 	public void migrate(int pageNum) {
-		this.migrate(pageNum, false, true);
+		this.migrate(pageNum, false, this.preview);
 	}
 
 	/**

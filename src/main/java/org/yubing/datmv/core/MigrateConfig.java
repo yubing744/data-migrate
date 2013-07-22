@@ -8,7 +8,13 @@ import java.util.List;
  * Author: Wu Cong-Wen Date: 2011-7-9
  */
 public interface MigrateConfig {
-
+	/**
+	 * 获取迁移名称
+	 * 
+	 * @return
+	 */
+	String getName();
+	
 	/**
 	 * 获取配置项
 	 * 

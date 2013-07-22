@@ -346,11 +346,8 @@ public class XmlMigrateConfig extends AbstractMigrateConfig {
 		}
 	}
 
-	
+	public String getName() {
+		return "XML Config:" + this.xmlConfig;
+	}
 
-	
-
-	
-
-	
 }

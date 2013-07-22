@@ -54,8 +54,6 @@ public class JdbcWriter implements PageWriter {
 		if (StringUtils.isBlank(baseSql)) {
 			baseSql = "insert into `" + this.tableName + "` ";
 		}
-		
-		System.out.println(dialect);
 	}
 
 	public void writePage(RecordPage recPage) {

@@ -22,4 +22,8 @@ public class SimpleMigrateConfig extends AbstractMigrateConfig {
 		item.setMappingKey(mappingKey);
 		this.configItems.add(item);
 	}
+
+	public String getName() {
+		return "simple migrate";
+	}
 }

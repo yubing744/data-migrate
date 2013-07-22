@@ -10,4 +10,8 @@ import org.yubing.datmv.config.AbstractMigrateConfig;
  */
 public class JsonMigrateConfig extends AbstractMigrateConfig{
 
+	public String getName() {
+		return "Json Migrate";
+	}
+
 }

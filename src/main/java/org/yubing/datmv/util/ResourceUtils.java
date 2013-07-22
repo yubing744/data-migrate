@@ -1,6 +1,7 @@
 package org.yubing.datmv.util;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -15,6 +16,10 @@ import org.apache.commons.lang.StringUtils;
  */
 public class ResourceUtils {
 
+	public static final String PROTOCOL_FILE = "file:";
+	public static final String PROTOCOL_CLASSPATH = "classpath:";
+	public static final String STAR_CLASSPATH = "*:";
+	
 	/**
 	 * 根据路径前缀自动识别资源位置，并打开资源获取InputStream.
 	 * 
@@ -23,15 +28,20 @@ public class ResourceUtils {
 	 */
 	public static InputStream openResource(String path) {
 		if (!StringUtils.isBlank(path)) {
-			if (StringUtils.startsWith(path, "classpath:")) {
-				String classpath = StringUtils.substring(path, "classpath:"
-						.length());
+			if (StringUtils.startsWith(path, PROTOCOL_CLASSPATH)) {
+				String classpath = StringUtils.substring(path, PROTOCOL_CLASSPATH.length());
 				return openResourceFromClasspath(classpath);
-			} else if (StringUtils.startsWith(path, "file:")) {
-				String filePath = StringUtils.substring(path, "file:".length());
+			} else if (StringUtils.startsWith(path, PROTOCOL_FILE)) {
+				String filePath = StringUtils.substring(path, PROTOCOL_FILE.length());
 				return openResourceFromFile(filePath);
 			} else {
-				return openResourceFromFile(path);
+				InputStream is = openResourceFromFile(System.getProperty("user.dir") + File.separator + path);
+				
+				if (is == null) {
+					is = openResourceFromClasspath("/" + path);
+				}
+				
+				return is;
 			}
 		}
 

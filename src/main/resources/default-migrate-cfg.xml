@@ -42,6 +42,9 @@
 		<migrate-listener name="log">
 			<listener class="org.yubing.datmv.listener.LogListener" />
 		</migrate-listener>
+		<migrate-listener name="progress">
+			<listener class="org.yubing.datmv.listener.ProgressListener" />
+		</migrate-listener>
 	</migrate-listeners>
 
 	<!-- 注册记录过滤器 -->
@@ -73,5 +76,8 @@
 
 	<!-- 默认使用控制台预览输出-->
 	<preview type="console"/>
+	
+	<!-- 迁移进度监听器 -->
+	<listener value="progress"/>
 	
 </migrate-config>

@@ -3,11 +3,16 @@ package org.yubing.datmv.task;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.yubing.datmv.core.DataMigrater;
 import org.yubing.datmv.core.MigrateConfig;
+import org.yubing.datmv.util.TimeRange;
 
 public class MigrateTask {
 
+	private final static Log log = LogFactory.getLog(MigrateTask.class);
+	
 	private String name;
 	private List<MigrateTask> depends;
 	private MigrateConfig migrateConfig;
@@ -54,7 +59,12 @@ public class MigrateTask {
 			}
 		}
 		
+		TimeRange tr = new TimeRange(log, "Migrate Task '" + this.name + "'");
+		tr.start();
+		
 		migrate();
+		
+		tr.end();
 	}
 
 	protected void migrate() {
