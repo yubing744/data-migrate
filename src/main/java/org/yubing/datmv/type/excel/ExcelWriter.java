@@ -1,6 +1,7 @@
 package org.yubing.datmv.type.excel;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -35,18 +36,23 @@ public class ExcelWriter implements PageWriter {
 	public ExcelWriter() {
 	}
 
-	public ExcelWriter(String filePath) {
+	public ExcelWriter(String filePath) throws FileNotFoundException {
 		this.excelPath = filePath;
+		
+		File file = new File(this.excelPath);
+		if (!file.exists()) {
+			throw new RuntimeException("can not find file:" + this.excelPath);
+		}
+
+		os = new FileOutputStream(file);
+	}
+
+	public ExcelWriter(OutputStream outputStream) {
+		this.os = outputStream;
 	}
 
 	public void open(MigrateContext context) {
 		try {
-			File file = new File(this.excelPath);
-			if (!file.exists()) {
-				throw new RuntimeException("can not find file:" + this.excelPath);
-			}
-
-			os = new FileOutputStream(file);
 			wwb = Workbook.createWorkbook(os);
 			ws = wwb.createSheet("sheet1", 0);
 		} catch (Exception e) {
@@ -94,7 +100,7 @@ public class ExcelWriter implements PageWriter {
 	private void writeDataField(DataField dataField, int colNum, int writeLine)
 			throws RowsExceededException, WriteException {
 		Object data = dataField.getData();
-		Label labelCF = new Label(colNum, writeLine, data.toString());
+		Label labelCF = new Label(colNum, writeLine, String.valueOf(data));
 		ws.addCell(labelCF);
 	}
 

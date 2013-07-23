@@ -20,4 +20,6 @@ public class DataType {
 	public static final String BOOLEAN = "bool";
 	
 	public static final String DATE = "date";
+	
+	public static final String OBJECT = "object";
 }
