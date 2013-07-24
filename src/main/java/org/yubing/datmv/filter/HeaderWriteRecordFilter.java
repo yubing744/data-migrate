@@ -20,7 +20,6 @@ import org.yubing.datmv.core.internal.SimpleRecord;
 public class HeaderWriteRecordFilter implements RecordFilter {
 
 	public Record filter(Record source, PageContext context, RecordFilterChain chain) {
-
 		Integer pageNum = (Integer) context.getAttribute("cur.page.num");
 		Boolean hasWrited = (Boolean) context
 				.getAttribute("header.has.write.flag");
@@ -37,21 +36,7 @@ public class HeaderWriteRecordFilter implements RecordFilter {
 			}
 		}
 
-		Record result = chain.filter(source, context);
-
-		if (pageNum == 1 && hasWrited == null) {
-			RecordPage target = context.getTarget();
-			if (target != null) {
-				Record header = makeHeaderRecord(result);
-				if (header != null) {
-					target.writeRecord(header);
-					context.setAttribute("header.has.write.flag", new Boolean(
-							true));
-				}
-			}
-		}
-
-		return result;
+		return chain.filter(source, context);
 	}
 
 	protected Record makeHeaderRecord(Record target) {
