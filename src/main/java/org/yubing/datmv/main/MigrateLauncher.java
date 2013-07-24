@@ -19,6 +19,15 @@ public class MigrateLauncher {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		launch(args);
+	}
+
+	/**
+	 * 启动
+	 * 
+	 * @param args
+	 */
+	public static void launch(String[] args) {
 		MigrateTaskEngine engine = new MigrateTaskEngine();
 		List<MigrateOption> options = parseOptions(args);
 		engine.start(options);

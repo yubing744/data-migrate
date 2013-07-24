@@ -134,7 +134,7 @@ public class DataMigrater {
 
 		RecordPage targetPage = filterPage(page, context);
 
-		if (preview) {
+		if (targetPage!=null && preview) {
 			pagePreview.title("Preview Target Page " + curPageNum + " ("
 					+ targetPage.pageSize() + " Record):");
 			pagePreview.preview(targetPage);

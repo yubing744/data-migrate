@@ -27,6 +27,13 @@ public class ExcelReader implements PageReader {
 	private int totalLine;
 	private String excelPath;
 
+	private boolean hasHeader = false;
+	private String[] headers;
+	
+	public void setHasHeader(boolean hasHeader) {
+		this.hasHeader = hasHeader;
+	}
+	
 	public ExcelReader(String filePath) {
 		this.excelPath = filePath;
 	}
@@ -38,16 +45,41 @@ public class ExcelReader implements PageReader {
 
 			this.totalLine = sheet.getRows();
 			this.colSize = sheet.getColumns();
+			
+			if (this.hasHeader) {
+				this.headers = readLineDatas();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error in open " + excelPath, e);
 		}
 	}
 
+	
+
 	public boolean hasNext() {
 		return this.curLine < this.totalLine - 1;
 	}
 
+	private String[] readLineDatas() {
+		int colSize = this.colSize;
+		int curLine = this.curLine;
+		
+		int startLine = curLine;
+		
+		String[] headers = new String[colSize];
+		
+		for (int c = 0; c < colSize; c++) {
+			Cell cell = sheet.getCell(c, startLine);
+			String cellContents = cell.getContents();
+			headers[c] = cellContents;
+		}
+		
+		this.curLine++;
+		
+		return headers;
+	}
+	
 	public RecordPage readPage(int pageSize) {
 		int colSize = this.colSize;
 		int curLine = this.curLine;
@@ -66,7 +98,12 @@ public class ExcelReader implements PageReader {
 				Cell cell = sheet.getCell(c, readLine);
 				String cellContents = cell.getContents();
 				
-				SimpleDataField cellData = new SimpleDataField(String.valueOf(c), DataType.STRING);
+				String key = String.valueOf(c);
+				if (this.hasHeader) {
+					key = this.headers[c];
+				}
+				
+				SimpleDataField cellData = new SimpleDataField(key, DataType.STRING);
 				cellData.setData(cellContents);
 
 				record.addDataField(cellData.getName(), cellData);

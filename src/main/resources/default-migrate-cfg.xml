@@ -5,6 +5,7 @@
 		<migrate-type name="excel">
 			<reader class="org.yubing.datmv.type.excel.ExcelReader" />
 			<writer class="org.yubing.datmv.type.excel.ExcelWriter" />
+			<property-parser class="org.yubing.datmv.config.xml.parser.property.ExcelTypePropertyParser" />
 		</migrate-type>
 		<migrate-type name="csv">
 			<reader class="org.yubing.datmv.type.csv.CsvReader" />

@@ -9,6 +9,13 @@ import org.yubing.datmv.core.DataMigrater;
 import org.yubing.datmv.core.MigrateConfig;
 import org.yubing.datmv.util.TimeRange;
 
+/**
+ *	迁移任务
+ *
+ * @author Wu CongWen
+ * @email yubing744@163.com
+ * @date 2013-7-24
+ */
 public class MigrateTask {
 
 	private final static Log log = LogFactory.getLog(MigrateTask.class);
@@ -59,8 +66,7 @@ public class MigrateTask {
 			}
 		}
 		
-		TimeRange tr = new TimeRange(log, "Migrate Task '" + this.name + "'");
-		tr.start();
+		TimeRange tr = TimeRange.start(log, "Migrate Task '" + this.name + "'");
 		
 		migrate();
 		

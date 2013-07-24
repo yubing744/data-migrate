@@ -11,6 +11,19 @@ import org.apache.commons.logging.Log;
  */
 public class TimeRange {
 	
+	/**
+	 * 开始计时
+	 * @param log
+	 * @param tag
+	 * @return
+	 */
+	public static TimeRange start(Log log, String tag) {
+		TimeRange tr = new TimeRange(log, tag);
+		tr.start();
+		return tr;
+	}
+	
+	//-------------------------------------------
 	public TimeRange(Log log, String tag) {
 		this.log = log;
 		this.tag = tag;

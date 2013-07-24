@@ -72,7 +72,37 @@ public class DataMigrateHelper {
 		return writer;
 	}
 	
+	/**
+	 * 加载列表Map
+	 * 
+	 * @param config
+	 * @return
+	 */
 	public static List<Map<String, Object>> loadListMap(String config) {
 		return loadListMap(config, null);
+	}
+
+	/**
+	 * 执行迁移
+	 * 
+	 * @param config
+	 */
+	public static void migrate(String config) {
+		DataMigrater dm = new DataMigrater();
+		XmlMigrateConfig xmc = new XmlMigrateConfig(config);
+		dm.setMigrateConfig(xmc);
+		dm.migrate();
+	}
+	
+	/**
+	 * 执行预览
+	 * 
+	 * @param config
+	 */
+	public static void priview(String config) {
+		DataMigrater dm = new DataMigrater();
+		XmlMigrateConfig xmc = new XmlMigrateConfig(config);
+		dm.setMigrateConfig(xmc);
+		dm.preview();
 	}
 }
