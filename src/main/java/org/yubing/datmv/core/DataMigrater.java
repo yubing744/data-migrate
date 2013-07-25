@@ -35,23 +35,31 @@ public class DataMigrater {
 	private MigrateLog migrateLog;
 	private PageMigrater pageMigrater;
 	private PagePreview pagePreview;
+	
 	private int pageSize;
 	private boolean preview = true;
+	private String defaultMode = MigrateMode.MIGRATE;
+	
 	private MigrateContext context;
 
 	public void init() {
-		this.pageMigrater = (PageMigrater) ConfigUtils.newObjectFromConfig(
-				"page.migrater.impl",
-				"org.yubing.datmv.core.internal.SimplePageMigrater");
-		this.pageSize = Configuration.getIntValue("migrate.page.size", DEFAULT_MIGRATE_PAGE_SIZE);
-		this.pagePreview = (PagePreview) ConfigUtils.newObjectFromConfig(
-				"page.preview.impl",
-				"org.yubing.datmv.core.internal.ConsolePagePreview");
-		this.preview = Configuration.getBooleanValue("preview.enable");
-		this.migrateLog = MigrateLogFactory.getMigrateLog();
 		this.context = (MigrateContext) ConfigUtils.newObjectFromConfig(
 				"migrate.context.impl",
 				"org.yubing.datmv.core.internal.SimpleMigrateContext");
+		
+		this.pageMigrater = (PageMigrater) ConfigUtils.newObjectFromConfig(
+				"page.migrater.impl",
+				"org.yubing.datmv.core.internal.SimplePageMigrater");
+		
+		this.migrateLog = MigrateLogFactory.getMigrateLog();
+		
+		this.pageSize = Configuration.getIntValue("migrate.page.size", DEFAULT_MIGRATE_PAGE_SIZE);
+		
+		this.pagePreview = (PagePreview) ConfigUtils.newObjectFromConfig(
+				"page.preview.impl",
+				"org.yubing.datmv.core.internal.ConsolePagePreview");
+		
+		this.preview = Configuration.getBooleanValue("preview.enable");
 	}
 
 	/**
@@ -70,6 +78,32 @@ public class DataMigrater {
 	 */
 	public void setPreviewWidth(int width) {
 		this.pagePreview.setItemMaxWidth(width);
+	}
+
+	
+	/**
+	 * 启用默认预览
+	 */
+	public void enablePreview() {
+		this.preview = true;
+	}
+
+	/**
+	 * 设置迁移日志
+	 * 
+	 * @param migrateLog
+	 */
+	public void setMigrateLog(MigrateLog migrateLog) {
+		this.migrateLog = migrateLog;
+	}
+
+	/**
+	 * 设置默认迁移模式
+	 * 
+	 * @param defaultMode
+	 */
+	public void setDefaultMode(String defaultMode) {
+		this.defaultMode = defaultMode;
 	}
 
 	/**
@@ -170,12 +204,17 @@ public class DataMigrater {
 	/**
 	 * 执行数据迁移
 	 */
-	public void migrate(int pageNum, boolean previewMode, boolean preview) {
+	public void migrate(int pageNum, String migrateMode, boolean preview) {
 		try {
 			MigrateConfig migrateConfig = context.getMigrateConfig();
 			
 			if (checkMigrateConfig(migrateConfig)) {
 				context.setAttribute("page.size", this.pageSize);
+				context.setAttribute("preview.enable", preview);
+				context.setAttribute("migrate.mode", migrateMode);
+				
+				boolean previewMode = MigrateMode.PREVIEW.equals(migrateMode);
+				
 				fireEvent(MigrateEvents.START);
 				
 				PageMigrater pageMigrater = this.pageMigrater;
@@ -249,7 +288,7 @@ public class DataMigrater {
 	 * 
 	 */ 
 	public void preview(int pageNum) {
-		this.migrate(pageNum, true, true);
+		this.migrate(pageNum, MigrateMode.PREVIEW, true);
 	}
 
 	/**
@@ -264,7 +303,7 @@ public class DataMigrater {
 	 * 执行迁移第某页数据
 	 */
 	public void migrate(int pageNum) {
-		this.migrate(pageNum, false, this.preview);
+		this.migrate(pageNum, this.defaultMode, this.preview);
 	}
 
 	/**

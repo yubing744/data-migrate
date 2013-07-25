@@ -24,10 +24,14 @@ public class TypeTargetParser extends MigrateTypeParser {
 				MigrateTypeConfig typeConfig = xmlMigrateConfig
 						.getMigrateTypeConfig(typeName);
 
+				Object[] args = {};
+				
 				String value = sourceEle.getAttribute(ATTR_VALUE);
-				value = ConfigUtils.handleRefVal(value);
-				Object[] args = { value };
-
+				if (!StringUtils.isBlank(value)) {
+					value = ConfigUtils.handleRefVal(value);
+					args = new Object[]{ value };
+				} 
+				
 				String argParserClass = typeConfig.getWriterConstructorArgParser();
 				if (StringUtils.isBlank(argParserClass)) {
 					argParserClass = typeConfig.getConstructorArgParser();

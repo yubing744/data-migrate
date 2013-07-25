@@ -2,6 +2,10 @@
 
 	<!-- 注册迁移类型处理器 -->
 	<migrate-types>
+		<migrate-type name="empty">
+			<reader class="org.yubing.datmv.type.empty.EmptyReader" />
+			<writer class="org.yubing.datmv.type.empty.EmptyWriter" />
+		</migrate-type>
 		<migrate-type name="excel">
 			<reader class="org.yubing.datmv.type.excel.ExcelReader" />
 			<writer class="org.yubing.datmv.type.excel.ExcelWriter" />
