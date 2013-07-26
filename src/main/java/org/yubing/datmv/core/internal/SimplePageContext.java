@@ -64,10 +64,12 @@ public class SimplePageContext extends SimpleMigrateContext implements
 	}
 
 	public Object getAttribute(String key) {
-		Object val = getAttrMap().get(key);
-		if (val == null) {
+		Object val = super.getAttribute(key);
+		
+		if (val == null && this.migrateContext != null) {
 			val = this.migrateContext.getAttribute(key);
 		}
+		
 		return val;
 	}
 }

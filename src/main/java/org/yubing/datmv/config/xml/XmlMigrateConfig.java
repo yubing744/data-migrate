@@ -23,9 +23,9 @@ import org.yubing.datmv.config.xml.parser.config.PreviewTypeConfigsParser;
 import org.yubing.datmv.config.xml.parser.config.RecordFilterConfigsParser;
 import org.yubing.datmv.config.xml.parser.config.TypeSourceParser;
 import org.yubing.datmv.config.xml.parser.config.TypeTargetParser;
-import org.yubing.datmv.core.PageFilter;
 import org.yubing.datmv.util.DocumentUtils;
 import org.yubing.datmv.util.ResourceUtils;
+import org.yubing.datmv.util.config.Configuration;
 
 /**
  * XML格式 迁移配置实现
@@ -34,7 +34,8 @@ import org.yubing.datmv.util.ResourceUtils;
  */
 public class XmlMigrateConfig extends AbstractMigrateConfig {
 	protected static final String DEFAULT_XML_CONFIG = "/default-migrate-cfg.xml";
-
+	protected static final String EXT_XML_CONFIG = "classpath:/ext-migrate-cfg.xml";
+	
 	protected String xmlConfig = null;
 	protected Map<String, ConfigParser> parsers;
 
@@ -259,6 +260,8 @@ public class XmlMigrateConfig extends AbstractMigrateConfig {
 	 */
 	protected void parseInitConfig() {
 		parseConfigFromClassPath(DEFAULT_XML_CONFIG);
+		
+		parseXmlConfig(Configuration.getValue("ext.migrate.config", EXT_XML_CONFIG));
 		parseXmlConfig(xmlConfig);
 	}
 
@@ -290,8 +293,10 @@ public class XmlMigrateConfig extends AbstractMigrateConfig {
 	public void parseConfigFromClassPath(String classpath) {
 		if (!StringUtils.isBlank(classpath)) {
 			InputStream is = this.getClass().getResourceAsStream(classpath);
-			Document doc = DocumentUtils.parseStream(is);
-			parseConfig(doc);
+			if (is != null) {
+				Document doc = DocumentUtils.parseStream(is);
+				parseConfig(doc);
+			}
 		}
 	}
 

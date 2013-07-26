@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
 import org.yubing.datmv.core.DataType;
 import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageReader;
@@ -26,21 +25,21 @@ import org.yubing.datmv.util.config.ConfigUtils;
  * Author: Wu Cong-Wen Date: 2011-7-9
  */
 public class JdbcReader implements PageReader {
-	private DataSource dataSource;
-	private String tableName;
+	protected DataSource dataSource;
+	protected String tableName;
 
-	private DBHelper dbHelper;
-	private String type;
-	private String baseSql;
-	private String sql;
+	protected DBHelper dbHelper;
+	protected String type;
+	protected String baseSql;
+	protected String sql;
 
-	private Dialect dialect;
-	private String dialectClass;
+	protected Dialect dialect;
+	protected String dialectClass;
 	
-	private int curLine = 0;
-	private int totalLine;
+	protected int curLine = 0;
+	protected int totalLine;
 	
-	private Map<Class<?>, String> supportTypes = new HashMap<Class<?>, String>();
+	protected Map<Class<?>, String> supportTypes = new HashMap<Class<?>, String>();
 
 
 	public JdbcReader(DataSource dataSource,  String dialectClass, String type, String typeVal) {
@@ -110,8 +109,7 @@ public class JdbcReader implements PageReader {
 
 		RecordPage page = new SimpleRecordPage(pageSize);
 
-		String sql = dialect.buildPageQuery(this.baseSql, startLine, pageSize);
-		List<Map<String, Object>> dataPage = dbHelper.queryBySQL(sql);
+		List<Map<String, Object>> dataPage = queryByPage(pageSize, startLine);
 
 		int readSize = dataPage.size();
 		if (dataPage != null) {
@@ -153,6 +151,12 @@ public class JdbcReader implements PageReader {
 		}
 
 		return page;
+	}
+
+	protected List<Map<String, Object>> queryByPage(int pageSize, int startLine) {
+		String sql = dialect.buildPageQuery(this.baseSql, startLine, pageSize);
+		List<Map<String, Object>> dataPage = dbHelper.queryBySQL(sql);
+		return dataPage;
 	}
 
 	public void release() {

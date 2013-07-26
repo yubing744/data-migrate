@@ -26,6 +26,11 @@ public class ConfigUtils {
 		return ReflectUtils.newInstance(rcImplClazz);
 	}
 	
+	public static Object newObjectFromConfig(String key, String defaultVal, Object[] args) {
+		String rcImplClazz = Configuration.getValue(key, defaultVal);
+		return ReflectUtils.newInstance(rcImplClazz, args);
+	}
+	
 	/**
 	 * 处理对配置中的引用
 	 * 

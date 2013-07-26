@@ -220,7 +220,7 @@ public class DBHelper {
 	 * @param sql
 	 * @return List<Map<String,String>> 表
 	 */
-	public  List<Map<String, Object>> queryBySQL(String sql) {
+	public List<Map<String, Object>> queryBySQL(String sql) {
 		Connection conn = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -251,6 +251,87 @@ public class DBHelper {
 				list.add(map);
 			}
 			return list;
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(rs, st, conn);
+		}
+		
+		return null;
+	}
+	
+	public List<Map<String, Object>> queryBySQL(String sql, Object[] args) {
+		Connection conn = null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		List<Map<String, Object>> list = new LinkedList<Map<String, Object>>();
+		try {
+			conn = getConnection();
+			st = conn.prepareStatement(sql);
+			
+			if (args != null) {
+				for (int i = 0; i < args.length; i++) {
+					st.setObject(i + 1, args[i]);
+				}
+			}
+			
+			rs = st.executeQuery();
+			
+			ResultSetMetaData rsmd = rs.getMetaData();
+			Map<String, Object> map = null;
+			
+			while (rs.next()) {// 每循环一次是一行
+				map = new LinkedHashMap<String, Object>();
+				
+				for (int i = 1; i <= rsmd.getColumnCount(); i++) {// 每循环一次是一列
+					// 列名
+					String key = rsmd.getColumnLabel(i);
+					// 对应于当前行，当前列的数据
+					
+					try {
+						map.put(key, rs.getObject(key));
+					} catch(Exception e) {
+						log.warn("error int get value.", e);
+						map.put(key, null);
+					}
+				}
+				
+				list.add(map);
+			}
+			return list;
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(rs, st, conn);
+		}
+		
+		return null;
+	}
+	
+	public Integer queryForInt(String sql, Object[] args) {
+		Connection conn = null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+
+		try {
+			conn = getConnection();
+			st = conn.prepareStatement(sql);
+			
+			if (args != null) {
+				for (int i = 0; i < args.length; i++) {
+					st.setObject(i + 1, args[i]);
+				}
+			}
+			
+			rs = st.executeQuery();
+			
+			if (rs.next()) {// 每循环一次是一行
+				return rs.getInt(1);
+			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -358,4 +439,6 @@ public class DBHelper {
 		
 		return false;
 	}
+
+	
 }

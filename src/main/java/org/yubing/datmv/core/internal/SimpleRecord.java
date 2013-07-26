@@ -1,5 +1,7 @@
 package org.yubing.datmv.core.internal;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -41,11 +43,25 @@ public class SimpleRecord implements Record {
 
 	public Object getFieldData(String key) {
 		DataField df = this.getDataField(key);
+		
 		if (df != null) {
 			return df.getData();
 		}
 		
 		return null;
+	}
+
+	public Map<String, Object> toMap() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		Set<String> keys = this.keySet();
+		
+		for (Iterator<String> it = keys.iterator(); it.hasNext();) {
+			String key =  it.next();
+			map.put(key, this.getFieldData(key));
+		}
+		
+		return map;
 	}
 
 }

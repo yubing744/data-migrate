@@ -160,7 +160,8 @@ public class ReflectUtils {
 		for (int i = 0; i < size; i++) {
 			Class<?> realClazz = argTyps[i];
 			Class<?> inputClazz = paramTypes[i];
-			if (!inputClazz.isAssignableFrom(realClazz)) {
+			if (realClazz!=null && inputClazz!= null 
+					&& !inputClazz.isAssignableFrom(realClazz)) {
 				isSupper = false;
 			}
 		}
@@ -179,8 +180,12 @@ public class ReflectUtils {
 		
 		Class<?>[] types = new Class[size];
 		for (int i = 0; i < size; i++) {
-			Class<?> clazz = args[i].getClass();
-			types[i] = clazz;
+			if (args[i] != null) {
+				Class<?> clazz = args[i].getClass();
+				types[i] = clazz;
+			} else {
+				types[i] = null;
+			}
 		}
 		
 		return types;

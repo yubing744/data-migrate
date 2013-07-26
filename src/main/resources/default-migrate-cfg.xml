@@ -74,6 +74,7 @@
 			<constructor-arg-parser
 				class="org.yubing.datmv.config.xml.parser.argment.ScriptBlockArgmentParser" />
 		</mapping-handler>
+		
 		<mapping-handler name="now">
 			<handler class="org.yubing.datmv.mapping.handler.CurrentDateMappingHandler" />
 		</mapping-handler>
@@ -81,6 +82,13 @@
 		<mapping-handler name="el">
 			<handler class="org.yubing.datmv.mapping.handler.BeanMappingHandler" />
 		</mapping-handler>
+		
+		<mapping-handler name="mvconfig">
+			<handler class="org.yubing.datmv.mapping.handler.MigrateConfigMappingHandler" />
+			<constructor-arg-parser
+				class="org.yubing.datmv.config.xml.parser.argment.SingleValueArgmentsParser" />
+		</mapping-handler>
+		
 	</mapping-handlers>
 
 	<!-- 默认使用控制台预览输出-->

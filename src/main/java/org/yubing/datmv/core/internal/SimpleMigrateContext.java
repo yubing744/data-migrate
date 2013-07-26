@@ -14,25 +14,19 @@ import org.yubing.datmv.core.MigrateContext;
  */
 public class SimpleMigrateContext implements MigrateContext {
 
-	private Map<String, String> paramsMap;
-	private Map<String, Object> attrMap;
+	protected MigrateContext parent;
+	
+	private Map<String, String> paramsMap = new HashMap<String, String>();
+	private Map<String, Object> attrMap = new HashMap<String, Object>();
 	
 	private MigrateConfig migrateConfig;
 
-	protected Map<String, Object> getAttrMap() {
-		if (attrMap == null) {
-			attrMap = new HashMap<String, Object>();
-		}
-		
-		return attrMap;
+	public SimpleMigrateContext() {
+		this.parent = null;
 	}
-
-	public Map<String, String> getParameterMap() {
-		if (paramsMap == null) {
-			paramsMap = new HashMap<String, String>();
-		}
-		
-		return paramsMap;
+	
+	public SimpleMigrateContext(MigrateContext parent) {
+		this.parent = parent;
 	}
 	
 	public MigrateConfig getMigrateConfig() {
@@ -48,19 +42,68 @@ public class SimpleMigrateContext implements MigrateContext {
 		}
 	}
 
-	public Object getAttribute(String key) {
-		return getAttrMap().get(key);
+	public Map<String, Object> getAttributeMap() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		if (this.parent != null) {
+			map.putAll(this.parent.getAttributeMap());
+		}
+		
+		map.putAll(this.attrMap);
+		
+		return map;
 	}
 
-	public void setAttribute(String key, Object value) {
-		getAttrMap().put(key, value);
+	public Map<String, String> getParameterMap() {
+		Map<String, String> map = new HashMap<String, String>();
+		
+		if (this.parent != null) {
+			map.putAll(this.parent.getParameterMap());
+		}
+		
+		map.putAll(this.paramsMap);
+		
+		return map;
 	}
 	
+	public Object getAttribute(String key) {
+		Object result = null;
+		
+		if (result == null) {
+			result = attrMap.get(key);
+		}
+		
+		if (this.parent != null) {
+			result = this.parent.getAttribute(key);
+		}
+		
+		return result;
+	}
+
+
 	public String getParameter(String key) {
-		return getParameterMap().get(key);
+		String result = null;
+		
+		if (result == null) {
+			result = paramsMap.get(key);
+		}
+		
+		if (this.parent != null) {
+			result = this.parent.getParameter(key);
+		}
+
+		return result;
 	}
 	
 	public void setParameter(String key, String value) {
-		getParameterMap().put(key, value);
+		paramsMap.put(key, value);
+	}
+
+	public void setAttribute(String key, Object value) {
+		attrMap.put(key, value);
+	}
+	
+	public MigrateContext getParent() {
+		return this.parent;
 	}
 }

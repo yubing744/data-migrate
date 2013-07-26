@@ -19,6 +19,7 @@ import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageWriter;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordPage;
+import org.yubing.datmv.exception.MigrateException;
 
 /**
  * Excel 数据记录写入器
@@ -27,14 +28,27 @@ import org.yubing.datmv.core.RecordPage;
  */
 public class ExcelWriter implements PageWriter {
 
-	private OutputStream os;
-	private WritableWorkbook wwb;
-	private WritableSheet ws;
-	private int curLine = 0;
-	private String excelPath;
-
-	public ExcelWriter() {
+	public static class Size {
+		public Size(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+		
+		public int x;
+		public int y;
+		
+		public static Size max(Size s1, Size s2) {
+			return new Size(Math.max(s1.x, s2.x), Math.max(s1.y, s2.y));
+		}
 	}
+	
+	protected OutputStream os;
+	protected WritableWorkbook wwb;
+	protected WritableSheet ws;
+	protected int curLine = 0;
+	protected String excelPath;
+
+	public ExcelWriter() {}
 
 	public ExcelWriter(String filePath) throws FileNotFoundException {
 		this.excelPath = filePath;
@@ -63,45 +77,61 @@ public class ExcelWriter implements PageWriter {
 
 	public void writePage(RecordPage recPage) {
 		recPage.reset();
-		int curLine = this.curLine;
+		Integer curLine = this.curLine;
 
 		int startLine = curLine;
-		int endLine = curLine + recPage.pageSize();
-		int writeLine = startLine;
-
+		
+		Size max = new Size(0, startLine);
+		
 		try {
-
-			while (recPage.hasNext() && writeLine < endLine) {
-				Record record = recPage.readRecord();
-				writeRecord(record, writeLine);
-				writeLine++;
-			}
-
+			max = writePage(recPage, max);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new MigrateException("error in write page data!", e);
 		} finally {
-			this.curLine = writeLine;
+			this.curLine = this.curLine + max.y;
 		}
 	}
 
-	private void writeRecord(Record record, int writeLine)
+	protected Size writePage(RecordPage recPage, Size init) throws RowsExceededException, WriteException {
+		int writeLine = init.y;
+		
+		while (recPage.hasNext()) {
+			Record record = recPage.readRecord();
+			Size writeSize = writeRecord(record, writeLine);
+			init = Size.max(init, writeSize);
+			writeLine = init.y;
+		}
+		
+		return init;
+	}
+
+	protected Size writeRecord(Record record, int currentLine)
 			throws RowsExceededException, WriteException {
+		Size max = new Size(1, 1);
+		
 		if (record != null) {
 			Set<String> keys = record.keySet();
 			int colNum = 0;
+			
 			for (Iterator<String> it = keys.iterator(); it.hasNext();) {
 				String key = it.next();
 				DataField dataField = record.getDataField(key);
-				writeDataField(dataField, colNum++, writeLine);
+				Size size = writeDataField(dataField, colNum,  currentLine);
+				max = Size.max(max, size);
 			}
 		}
+		
+		return max;
 	}
 
-	private void writeDataField(DataField dataField, int colNum, int writeLine)
+	protected Size writeDataField(DataField dataField, int colNum, int writeLine)
 			throws RowsExceededException, WriteException {
 		Object data = dataField.getData();
+		
 		Label labelCF = new Label(colNum, writeLine, String.valueOf(data));
 		ws.addCell(labelCF);
+		
+		return new Size(1, 1);
 	}
 
 	public void release() {

@@ -31,12 +31,23 @@ public class SimpleRecordMigrater implements RecordMigrater {
 				Object defaultVal = configItem.getDefaultValue();
 				
 				String mappingKey = configItem.getMappingKey();
-				
+
+				if (destName != null) {
+					DataField sourceField = source.getDataField(mappingKey);
+					DataField targetField = copyFrom(sourceField, destName, destType, defaultVal);
+					target.addDataField(destName, targetField);
+				}
+			}
+			
+			for (Iterator<ConfigItem> it = items.iterator(); it.hasNext();) {
+				ConfigItem configItem = it.next();
+
+				String destName = configItem.getName();
+
 				MappingHandler mapHandler = configItem.getMappingHandler();
 
 				if (destName != null) {
-					DataField targetField = source.getDataField(mappingKey);
-					targetField = copyFrom(targetField, destName, destType, defaultVal);
+					DataField targetField = target.getDataField(destName);
 
 					if (mapHandler != null) {
 						context.setConfigItem(configItem);
@@ -58,7 +69,6 @@ public class SimpleRecordMigrater implements RecordMigrater {
 		targetFiled.setData(defaultVal);
 		
 		if (sourceFiled != null) {
-			//TODO Convert data to correct type
 			targetFiled.setData(sourceFiled.getData());
 		}
 		

@@ -29,9 +29,13 @@ public class DataMigrater {
 	}
 
 	public DataMigrater() {
-		this.init();
+		this.init(null);
 	}
 
+	public DataMigrater(MigrateContext context) {
+		this.init(context);
+	}
+	
 	private MigrateLog migrateLog;
 	private PageMigrater pageMigrater;
 	private PagePreview pagePreview;
@@ -42,10 +46,10 @@ public class DataMigrater {
 	
 	private MigrateContext context;
 
-	public void init() {
+	public void init(MigrateContext parentContext) {
 		this.context = (MigrateContext) ConfigUtils.newObjectFromConfig(
 				"migrate.context.impl",
-				"org.yubing.datmv.core.internal.SimpleMigrateContext");
+				"org.yubing.datmv.core.internal.SimpleMigrateContext", new Object[]{parentContext});
 		
 		this.pageMigrater = (PageMigrater) ConfigUtils.newObjectFromConfig(
 				"page.migrater.impl",
@@ -132,6 +136,30 @@ public class DataMigrater {
 					this.context.setParameter(entry.getKey(), entry.getValue());
 				}
 			}
+		}
+	}
+	
+	/**
+	 * 添加属性
+	 * 
+	 * @param key
+	 * @param val
+	 */
+	public void addAttribute(String key, Object val) {
+		if (this.context != null) {
+			this.context.setAttribute(key, val);
+		}
+	}
+	
+	/**
+	 * 添加参数
+	 * 
+	 * @param key
+	 * @param val
+	 */
+	public void addParameter(String key, String val) {
+		if (this.context != null) {
+			this.context.setParameter(key, val);
 		}
 	}
 	

@@ -13,9 +13,11 @@ public class ScriptBlockArgmentParser implements ArgmentsParser {
 
 	public Object[] parserArgs(XmlMigrateConfig xmlMigrateConfig, Element element) {
 		String script = "";
+		
 		if (element != null) {
 			script = element.getTextContent();
 		}
+		
 		return new Object[] { script };
 	}
 

@@ -3,12 +3,9 @@ package org.yubing.datmv.core.internal;
 import java.util.Iterator;
 import java.util.List;
 
-import org.yubing.datmv.core.DataMigrater;
 import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageFilter;
 import org.yubing.datmv.core.PageFilterChain;
-import org.yubing.datmv.core.Record;
-import org.yubing.datmv.core.RecordFilter;
 import org.yubing.datmv.core.RecordPage;
 
 public class SimplePageFilterChain implements PageFilterChain {

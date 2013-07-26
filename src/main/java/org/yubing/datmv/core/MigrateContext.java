@@ -9,6 +9,14 @@ import java.util.Map;
  * @Date: 2011-7-12
  */
 public interface MigrateContext {
+	
+	/**
+	 * 获取父亲上下文
+	 * 
+	 * @return
+	 */
+	MigrateContext getParent();
+	
 	/**
 	 * 设置迁移配置
 	 * 
@@ -61,4 +69,12 @@ public interface MigrateContext {
 	 * @return
 	 */
 	Map<String, String> getParameterMap();
+	
+	
+	/**
+	 * 获取属性Map
+	 * 
+	 * @return
+	 */
+	Map<String, Object> getAttributeMap();
 }

@@ -1,5 +1,6 @@
 package org.yubing.datmv.core;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -55,4 +56,11 @@ public interface Record {
 	 * @return
 	 */
 	Object getFieldData(String key);
+
+	/**
+	 * 把当前记录值转换为一个Map
+	 * 
+	 * @return
+	 */
+	Map<String, Object> toMap();
 }

@@ -73,10 +73,12 @@ public class SimpleRecordContext extends SimpleMigrateContext implements
 	}
 
 	public Object getAttribute(String key) {
-		Object val = getAttrMap().get(key);
-		if (val == null) {
+		Object val = super.getAttribute(key);
+		
+		if (val == null && this.pageContext != null) {
 			val = this.pageContext.getAttribute(key);
 		}
+		
 		return val;
 	}
 }
