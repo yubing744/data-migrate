@@ -28,6 +28,10 @@
 		<migrate-type name="mem.map">
 			<writer class="org.yubing.datmv.type.mem.map.MapWriter" />
 		</migrate-type>
+		<migrate-type name="mvconfig">
+			<reader class="org.yubing.datmv.type.mvconfig.MigrateConfigPageReader" />
+			<property-parser class="org.yubing.datmv.config.xml.parser.property.MigrateConfigTypePropertyParser" />
+		</migrate-type>
 	</migrate-types>
 
 	<!-- 注册预览类型处理器 -->
@@ -65,6 +69,9 @@
 		<record-filter name="write_header">
 			<filter class="org.yubing.datmv.filter.HeaderWriteRecordFilter" />
 		</record-filter>
+		<record-filter name="xwrite_header">
+			<filter class="org.yubing.datmv.filter.XHeaderWriteRecordFilter" />
+		</record-filter>
 	</record-filters>
 
 	<!-- 注册数据域映射处理器 -->
@@ -86,7 +93,7 @@
 		<mapping-handler name="mvconfig">
 			<handler class="org.yubing.datmv.mapping.handler.MigrateConfigMappingHandler" />
 			<constructor-arg-parser
-				class="org.yubing.datmv.config.xml.parser.argment.SingleValueArgmentsParser" />
+				class="org.yubing.datmv.config.xml.parser.argment.MigrateConfigMappingHandlerArgmentsParser" />
 		</mapping-handler>
 		
 	</mapping-handlers>

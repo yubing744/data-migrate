@@ -1,12 +1,15 @@
 package org.yubing.datmv.mapping.handler;
 
 import org.yubing.datmv.config.xml.XmlMigrateConfig;
+import org.yubing.datmv.core.ConfigItem;
 import org.yubing.datmv.core.DataField;
 import org.yubing.datmv.core.DataMigrater;
 import org.yubing.datmv.core.MappingHandler;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordContext;
+import org.yubing.datmv.type.convert.TransposePageWriter;
 import org.yubing.datmv.type.mem.object.RecordPageWriter;
+import org.yubing.datmv.util.RecordUtils;
 
 /**
  *	迁移配置映射处理器
@@ -17,23 +20,31 @@ import org.yubing.datmv.type.mem.object.RecordPageWriter;
  */
 public class MigrateConfigMappingHandler implements MappingHandler {
 
-	private String migrateConfig;
+	protected boolean transpose = false;
+	protected String migrateConfig;
 	
-	public MigrateConfigMappingHandler(String migrateConfig) {
+	public MigrateConfigMappingHandler(String migrateConfig, Boolean transpose) {
 		this.migrateConfig = migrateConfig;
+		this.transpose = transpose!=null?transpose.booleanValue():false;
 	}
 	
-	public DataField mapFrom(DataField targetField, RecordContext context) {
+	public DataField mapFrom(DataField targetField, ConfigItem configItem, RecordContext context) {
 		Record source = context.getSource();
 		
 		DataMigrater dm = new DataMigrater(context);
 		XmlMigrateConfig xmc = new XmlMigrateConfig(migrateConfig);
 		
 		RecordPageWriter page = new RecordPageWriter();
-		xmc.setTargetWriter(page);
+		
+		if (transpose) {
+			xmc.setTargetWriter(new TransposePageWriter(page));
+		} else {
+			xmc.setTargetWriter(page);
+		}
+		
 		dm.setMigrateConfig(xmc);
 		
-		dm.addAttributes(source.toMap());
+		dm.addAttributes(RecordUtils.toMap(source));
 		
 		dm.migrate();
 		

@@ -18,8 +18,7 @@ import org.yubing.datmv.core.RecordContext;
  */
 public class BeanMappingHandler implements MappingHandler {
 
-	public DataField mapFrom(DataField targetField, RecordContext context) {
-		ConfigItem configItem = context.getConfigItem();
+	public DataField mapFrom(DataField targetField, ConfigItem configItem, RecordContext context) {
 		String mappingKey = configItem.getMappingKey();
 		
 		String[] segs = mappingKey.split("\\.");

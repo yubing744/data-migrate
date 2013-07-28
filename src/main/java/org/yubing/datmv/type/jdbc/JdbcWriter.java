@@ -3,7 +3,6 @@ package org.yubing.datmv.type.jdbc;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.yubing.datmv.core.DataField;
@@ -73,10 +72,8 @@ public class JdbcWriter implements PageWriter {
 		List<Object> args = new ArrayList<Object>();
 		
 		if (record != null) {
-			Set<String> keys = record.keySet();
-			for (Iterator<String> it = keys.iterator(); it.hasNext();) {
-				String key = it.next();
-				DataField dataField = record.getDataField(key);
+			for (Iterator<DataField> it = record.iterator(); it.hasNext();) {
+				DataField dataField = it.next();
 				
 				if (dataField != null) {
 					colDatas.append(dataField.getName()).append(",");
@@ -84,9 +81,11 @@ public class JdbcWriter implements PageWriter {
 					args.add(dataField.getData());
 				}
 			}
+			
 			if (colDatas.length() > 1) {
 				colDatas.setLength(colDatas.length() - 1);
 			}
+			
 			colDatas.append(")");
 
 			if (valDatas.length() > 1) {

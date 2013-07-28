@@ -3,10 +3,12 @@ package org.yubing.datmv.type.excel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Set;
 
+import jxl.Sheet;
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.WritableSheet;
@@ -20,6 +22,7 @@ import org.yubing.datmv.core.PageWriter;
 import org.yubing.datmv.core.Record;
 import org.yubing.datmv.core.RecordPage;
 import org.yubing.datmv.exception.MigrateException;
+import org.yubing.datmv.util.ResourceUtils;
 
 /**
  * Excel 数据记录写入器
@@ -37,16 +40,35 @@ public class ExcelWriter implements PageWriter {
 		public int x;
 		public int y;
 		
+		@Override
+		public String toString() {
+			return "Size [x=" + x + ", y=" + y + "]";
+		}
+
 		public static Size max(Size s1, Size s2) {
 			return new Size(Math.max(s1.x, s2.x), Math.max(s1.y, s2.y));
 		}
 	}
-	
+	protected InputStream is;
 	protected OutputStream os;
+	
 	protected WritableWorkbook wwb;
 	protected WritableSheet ws;
+	
 	protected int curLine = 0;
 	protected String excelPath;
+
+	protected int startRow = 0;
+	protected int startColumn = 0;
+	
+	
+	public void setStartRow(int startRow) {
+		this.startRow = startRow;
+	}
+
+	public void setStartColumn(int startColumn) {
+		this.startColumn = startColumn;
+	}
 
 	public ExcelWriter() {}
 
@@ -65,10 +87,28 @@ public class ExcelWriter implements PageWriter {
 		this.os = outputStream;
 	}
 
+	public ExcelWriter(InputStream inputStream, OutputStream outputStream) {
+		this.is = inputStream;
+		this.os = outputStream;
+	}
+	
+	public ExcelWriter(String excelFile , OutputStream outputStream) {
+		this.is = ResourceUtils.openResource(excelFile);
+		this.os = outputStream;
+	}
+	
 	public void open(MigrateContext context) {
 		try {
-			wwb = Workbook.createWorkbook(os);
-			ws = wwb.createSheet("sheet1", 0);
+			if (this.is != null) {
+				Workbook wb = Workbook.getWorkbook(is);
+				wwb = Workbook.createWorkbook(os, wb);
+				ws = wwb.getSheet(0);
+			} else {
+				wwb = Workbook.createWorkbook(os);
+				ws = wwb.createSheet("sheet1", 0);
+			}
+			
+			this.curLine = this.startRow;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error in open " + this.excelPath, e);
@@ -81,54 +121,67 @@ public class ExcelWriter implements PageWriter {
 
 		int startLine = curLine;
 		
-		Size max = new Size(0, startLine);
+		Size size = new Size(0, 0);
 		
 		try {
-			max = writePage(recPage, max);
+			size = writePage(recPage, this.startColumn, startLine, false);
 		} catch (Exception e) {
 			throw new MigrateException("error in write page data!", e);
 		} finally {
-			this.curLine = this.curLine + max.y;
+			this.curLine = this.curLine + size.y;
 		}
 	}
 
-	protected Size writePage(RecordPage recPage, Size init) throws RowsExceededException, WriteException {
-		int writeLine = init.y;
+	protected Size writePage(RecordPage recPage, int colNum, int rowNum, boolean transpose) throws RowsExceededException, WriteException {
+		int writeCol = colNum;
+		int writeLine = rowNum;
+		
+		Size size = new Size(0, 0);
 		
 		while (recPage.hasNext()) {
 			Record record = recPage.readRecord();
-			Size writeSize = writeRecord(record, writeLine);
-			init = Size.max(init, writeSize);
-			writeLine = init.y;
-		}
-		
-		return init;
-	}
-
-	protected Size writeRecord(Record record, int currentLine)
-			throws RowsExceededException, WriteException {
-		Size max = new Size(1, 1);
-		
-		if (record != null) {
-			Set<String> keys = record.keySet();
-			int colNum = 0;
+			Size writeSize = writeRecord(record, writeCol, writeLine, transpose);
+			size = Size.max(size, new Size(writeCol - colNum + writeSize.x, writeLine - rowNum + writeSize.y));
 			
-			for (Iterator<String> it = keys.iterator(); it.hasNext();) {
-				String key = it.next();
-				DataField dataField = record.getDataField(key);
-				Size size = writeDataField(dataField, colNum,  currentLine);
-				max = Size.max(max, size);
+			if (transpose) {
+				writeCol = rowNum + size.x;
+			} else {
+				writeLine = rowNum + size.y;
 			}
 		}
 		
-		return max;
+		return size;
 	}
 
-	protected Size writeDataField(DataField dataField, int colNum, int writeLine)
+	protected Size writeRecord(Record record, int colNum, int rowNum, boolean transpose)
+			throws RowsExceededException, WriteException {
+		int writeCol = colNum;
+		int writeLine = rowNum;
+		
+		Size size = new Size(0, 0);
+		
+		if (record != null) {
+			for (Iterator<DataField> it = record.iterator(); it.hasNext();) {
+				DataField dataField = it.next();
+				Size writeSize = writeDataField(dataField, writeCol, writeLine, transpose);
+				size = Size.max(size, new Size(writeCol - colNum + writeSize.x, writeLine - rowNum + writeSize.y));
+				
+				if (transpose) {
+					writeLine = rowNum + size.y;
+				} else {
+					writeCol = colNum + size.x;
+				}
+			}
+		}
+		
+		return size;
+	}
+
+	protected Size writeDataField(DataField dataField, int colNum, int rowNum, boolean transpose)
 			throws RowsExceededException, WriteException {
 		Object data = dataField.getData();
 		
-		Label labelCF = new Label(colNum, writeLine, String.valueOf(data));
+		Label labelCF = new Label(colNum, rowNum, String.valueOf(data));
 		ws.addCell(labelCF);
 		
 		return new Size(1, 1);

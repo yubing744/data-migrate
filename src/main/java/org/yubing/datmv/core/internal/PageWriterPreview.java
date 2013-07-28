@@ -38,7 +38,7 @@ public class PageWriterPreview implements PagePreview {
 		Record record = new SimpleRecord();
 		SimpleDataField titleField = new SimpleDataField("Title", DataType.STRING);
 		titleField.setData(title);
-		record.addDataField(titleField.getName(), titleField);
+		record.addDataField(titleField);
 		this.preview(record);
 	}
 

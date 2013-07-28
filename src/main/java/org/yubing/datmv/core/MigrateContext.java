@@ -18,19 +18,18 @@ public interface MigrateContext {
 	MigrateContext getParent();
 	
 	/**
-	 * 设置迁移配置
-	 * 
-	 * @param migrateConfig
-	 */
-	void setMigrateConfig(MigrateConfig migrateConfig);
-
-	/**
 	 * 获取迁移配置
 	 * 
 	 * @return
 	 */
 	MigrateConfig getMigrateConfig();
 
+	/**
+	 * 
+	 * @param migrateConfig
+	 */
+	void setMigrateConfig(MigrateConfig migrateConfig);
+	
 	/**
 	 * 添加属性
 	 * 

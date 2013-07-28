@@ -10,14 +10,24 @@ import org.yubing.datmv.core.DataField;
 import org.yubing.datmv.core.Record;
 
 public class SimpleRecord implements Record {
-	private Map<String, DataField> fileds = new LinkedHashMap<String, DataField>();
+	
+	protected Map<String, DataField> fileds = new LinkedHashMap<String, DataField>();
+
+	public SimpleRecord() {
+		super();
+	}
+
+	public SimpleRecord(Record source) {
+		if (source != null) {
+			for (Iterator<DataField> iterator = source.iterator(); iterator.hasNext();) {
+				DataField field = iterator.next();
+				this.addDataField(field);
+			}
+		}
+	}
 
 	public Map<String, DataField> getFileds() {
 		return fileds;
-	}
-
-	public void addDataField(String key, DataField dataField) {
-		this.getFileds().put(key, dataField);
 	}
 
 	public void removeDataField(String key) {
@@ -62,6 +72,18 @@ public class SimpleRecord implements Record {
 		}
 		
 		return map;
+	}
+
+	public void addDataField(DataField dataField) {
+		this.fileds.put(dataField.getName(), dataField);
+	}
+
+	public int size() {
+		return this.fileds.size();
+	}
+
+	public Iterator<DataField> iterator() {
+		return this.fileds.values().iterator();
 	}
 
 }

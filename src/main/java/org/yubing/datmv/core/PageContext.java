@@ -2,9 +2,9 @@ package org.yubing.datmv.core;
 
 public interface PageContext extends MigrateContext {
 	
-	RecordPage getSource();
+	RecordPage getSourcePage();
 
-	RecordPage getTarget();
+	RecordPage getTargetPage();
 
 	MigrateContext getMigrateContext();
 }

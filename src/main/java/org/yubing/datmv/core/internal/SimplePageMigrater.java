@@ -60,9 +60,8 @@ public class SimplePageMigrater implements PageMigrater, RecordFilter {
 			resultPage = new SimpleRecordPage();
 			recPage.reset();
 			
-			SimplePageContext context= new SimplePageContext(recPage, resultPage);
-			context.setMigrateContext(migrateContext);
-			
+			SimplePageContext context= new SimplePageContext(migrateContext, recPage, resultPage);
+
 			while (recPage.hasNext()) {
 				Record source = recPage.readRecord();
 				Record target = filterRecord(source, context);

@@ -31,10 +31,12 @@ public class JdbcReaderConstructorArgParser extends JdbcConstructorArgParser {
 					+ ", must config " +  ATTR_TABLE_NAME + " or " + ATTR_SQL + " one.");
 		}
 
-		if (StringUtils.isBlank(sql)) {
+		if (StringUtils.isBlank(sql) && !StringUtils.isBlank(tableName)) {
 			return new Object[] { dataSource, dialectClass, "table", tableName};
-		} else {
+		} else if (!StringUtils.isBlank(sql) && StringUtils.isBlank(tableName)){
 			return new Object[] { dataSource, dialectClass, "sql", sql};
+		} else {
+			return new Object[] { dataSource, dialectClass, "both", tableName, sql};
 		}
 	}
 

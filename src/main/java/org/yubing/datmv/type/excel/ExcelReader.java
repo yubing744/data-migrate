@@ -1,5 +1,7 @@
 package org.yubing.datmv.type.excel;
 
+import java.io.InputStream;
+
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
@@ -20,15 +22,16 @@ import org.yubing.datmv.util.ResourceUtils;
  * Author: Wu Cong-Wen Date: 2011-7-9
  */
 public class ExcelReader implements PageReader {
-	private Workbook book;
-	private Sheet sheet;
-	private int curLine = 0;
-	private int colSize;
-	private int totalLine;
-	private String excelPath;
-
-	private boolean hasHeader = false;
-	private String[] headers;
+	protected Workbook book;
+	protected Sheet sheet;
+	protected int curLine = 0;
+	protected int colSize;
+	protected int totalLine;
+	protected String excelPath;
+	protected InputStream is;
+	
+	protected boolean hasHeader = false;
+	protected String[] headers;
 	
 	public void setHasHeader(boolean hasHeader) {
 		this.hasHeader = hasHeader;
@@ -36,11 +39,16 @@ public class ExcelReader implements PageReader {
 	
 	public ExcelReader(String filePath) {
 		this.excelPath = filePath;
+		this.is = ResourceUtils.openResource(excelPath);
+	}
+
+	public ExcelReader(InputStream is) {
+		this.is = is;
 	}
 
 	public void open(MigrateContext context) {
 		try {
-			book = Workbook.getWorkbook(ResourceUtils.openResource(excelPath));
+			book = Workbook.getWorkbook(this.is);
 			sheet = book.getSheet(0);
 
 			this.totalLine = sheet.getRows();
@@ -106,7 +114,7 @@ public class ExcelReader implements PageReader {
 				SimpleDataField cellData = new SimpleDataField(key, DataType.STRING);
 				cellData.setData(cellContents);
 
-				record.addDataField(cellData.getName(), cellData);
+				record.addDataField(cellData);
 			}
 
 			page.writeRecord(record);

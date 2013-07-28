@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Scanner;
 
 import org.yubing.datmv.core.DataType;
 import org.yubing.datmv.core.MigrateContext;
@@ -23,7 +24,7 @@ import org.yubing.datmv.util.ResourceUtils;
 public class CsvReader implements PageReader {
 
 	private String csvPath;
-	private BufferedReader br;
+	private Scanner scanner;
 	
 	private String curLineText;
 
@@ -41,47 +42,33 @@ public class CsvReader implements PageReader {
 	public void open(MigrateContext context) {
 		try {
 			InputStream is = ResourceUtils.openResource(csvPath);
-			br = new BufferedReader(new InputStreamReader(is));
+			scanner = new Scanner(is, "UTF-8");
 			curLineText = null;
 			
 			if (this.hasHeader) {
 				this.headers = readLineDatas();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new RuntimeException("Error in open " + csvPath, e);
 		}
 	}
 
 	public boolean hasNext() {
-		if (curLineText == null) {
-			try {
-				curLineText = br.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			if (curLineText == null) {
-				return false;
-			}
-		}
-		
-		return true;
+		return scanner.hasNextLine();
 	}
 
 	private String[] readLineDatas() {
 		String[] datas = null;
 		
 		if (hasNext()) {
+			curLineText = scanner.nextLine();
 			datas = curLineText.split(",");
-			curLineText = null;
 		}
 		
 		return datas;
 	}
 
 	public RecordPage readPage(int pageSize) {
-
 		RecordPage page = new SimpleRecordPage(pageSize);
 
 		for (int readLine = 0; readLine < pageSize; readLine++) {
@@ -108,10 +95,12 @@ public class CsvReader implements PageReader {
 						cellData.setData(contents);
 					}
 
-					record.addDataField(cellData.getName(), cellData);
+					record.addDataField(cellData);
 				}
 				
 				page.writeRecord(record);
+			} else {
+				break;
 			}
 		}
 
@@ -119,12 +108,8 @@ public class CsvReader implements PageReader {
 	}
 
 	public void release() {
-		if (br != null) {
-			try {
-				br.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		if (scanner != null) {
+			scanner.close();
 		}
 	}
 

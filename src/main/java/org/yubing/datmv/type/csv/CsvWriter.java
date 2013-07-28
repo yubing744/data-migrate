@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.yubing.datmv.core.DataField;
 import org.yubing.datmv.core.MigrateContext;
@@ -51,10 +50,8 @@ public class CsvWriter implements PageWriter {
 	private void writeRecord(Record record) {
 		StringBuilder sb = new StringBuilder();
 		if (record != null) {
-			Set<String> keys = record.keySet();
-			for (Iterator<String> it = keys.iterator(); it.hasNext();) {
-				String key = it.next();
-				DataField dataField = record.getDataField(key);
+			for (Iterator<DataField> it = record.iterator(); it.hasNext();) {
+				DataField dataField = it.next();
 				if ("number".equals(dataField.getType())) {
 					sb.append(dataField.getData()).append(",");
 				} else {

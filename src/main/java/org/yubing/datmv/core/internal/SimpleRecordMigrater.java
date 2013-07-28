@@ -19,8 +19,7 @@ public class SimpleRecordMigrater implements RecordMigrater {
 		List<ConfigItem> items = migrateConfig.getConfigItems();
 		Record target = new SimpleRecord();
 
-		SimpleRecordContext context = new SimpleRecordContext(source, target);
-		context.setPageContext(pageContext);
+		SimpleRecordContext context = new SimpleRecordContext(pageContext, source, target);
 
 		if (items != null && !items.isEmpty()) {
 			for (Iterator<ConfigItem> it = items.iterator(); it.hasNext();) {
@@ -35,7 +34,7 @@ public class SimpleRecordMigrater implements RecordMigrater {
 				if (destName != null) {
 					DataField sourceField = source.getDataField(mappingKey);
 					DataField targetField = copyFrom(sourceField, destName, destType, defaultVal);
-					target.addDataField(destName, targetField);
+					target.addDataField(targetField);
 				}
 			}
 			
@@ -50,11 +49,10 @@ public class SimpleRecordMigrater implements RecordMigrater {
 					DataField targetField = target.getDataField(destName);
 
 					if (mapHandler != null) {
-						context.setConfigItem(configItem);
-						targetField = mapHandler.mapFrom(targetField, context);
+						targetField = mapHandler.mapFrom(targetField, configItem, context);
 					}
 
-					target.addDataField(destName, targetField);
+					target.addDataField(targetField);
 				}
 			}
 		} else {

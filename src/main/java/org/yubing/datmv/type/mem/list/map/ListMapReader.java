@@ -89,7 +89,7 @@ public class ListMapReader extends ArrayList<Map<String, Object>> implements Pag
 						cellData.setData(null);
 					}
 					
-					record.addDataField(key, cellData);
+					record.addDataField(cellData);
 				}
 			}
 			

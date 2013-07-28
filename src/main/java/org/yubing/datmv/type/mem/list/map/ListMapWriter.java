@@ -32,14 +32,11 @@ public class ListMapWriter extends ArrayList<Map<String, Object>>implements Page
 
 	private void writeRecord(Record record) {
 		if (record != null) {
-			Set<String> keys = record.keySet();
-			
 			Map<String, Object> map = new HashMap<String, Object>();
 			
-			for (Iterator<String> it = keys.iterator(); it.hasNext();) {
-				String key = it.next();
-				DataField dataField = record.getDataField(key);
-				map.put(key, dataField.getData());
+			for (Iterator<DataField> it = record.iterator(); it.hasNext();) {
+				DataField dataField = it.next();
+				map.put(dataField.getName(), dataField.getData());
 			}
 			
 			this.add(map);

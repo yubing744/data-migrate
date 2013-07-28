@@ -3,6 +3,7 @@ package org.yubing.datmv.mapping.handler;
 
 import java.util.Date;
 
+import org.yubing.datmv.core.ConfigItem;
 import org.yubing.datmv.core.DataField;
 import org.yubing.datmv.core.MappingHandler;
 import org.yubing.datmv.core.RecordContext;
@@ -16,7 +17,7 @@ import org.yubing.datmv.core.RecordContext;
  */
 public class CurrentDateMappingHandler implements MappingHandler {
 
-	public DataField mapFrom(DataField targetField, RecordContext context) {
+	public DataField mapFrom(DataField targetField, ConfigItem configItem, RecordContext context) {
 		targetField.setData(new Date());
 		return targetField;
 	}

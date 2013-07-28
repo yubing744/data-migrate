@@ -99,14 +99,12 @@ public class DBHelper {
 				}
 			}
 			return map;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error("sql error", e);
+			throw new RuntimeException("sql error", e);
 		} finally {
 			close(rs, st, conn);
 		}
-		return null;
 	}
 
 	/**
@@ -119,6 +117,7 @@ public class DBHelper {
 		Connection conn = null;
 		Statement st = null;
 		ResultSet rs = null;
+		
 		List<String> list = new LinkedList<String>();
 		try {
 			conn = getConnection();
@@ -130,14 +129,12 @@ public class DBHelper {
 				list.add(value);
 			}
 			return list;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error("sql error", e);
+			throw new RuntimeException("sql error", e);
 		} finally {
 			close(rs, st, conn);
 		}
-		return null;
 	}
 
 	/**
@@ -150,6 +147,7 @@ public class DBHelper {
 		Connection conn = null;
 		Statement st = null;
 		ResultSet rs = null;
+		
 		try {
 			conn = getConnection();
 			st = conn.createStatement();
@@ -157,13 +155,13 @@ public class DBHelper {
 			if (rs.next()) {// 每循环一次是一行
 				return rs.getString(1);
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error("sql error", e);
+			throw new RuntimeException("sql error", e);
 		} finally {
 			close(rs, st, conn);
 		}
+		
 		return null;
 	}
 
@@ -204,14 +202,12 @@ public class DBHelper {
 				list.add(map);
 			}
 			return list;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error("sql error", e);
+			throw new RuntimeException("sql error", e);
 		} finally {
 			close(rs, st, conn);
 		}
-		return null;
 	}
 
 	/**
@@ -251,15 +247,12 @@ public class DBHelper {
 				list.add(map);
 			}
 			return list;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error("sql error", e);
+			throw new RuntimeException("sql error", e);
 		} finally {
 			close(rs, st, conn);
 		}
-		
-		return null;
 	}
 	
 	public List<Map<String, Object>> queryBySQL(String sql, Object[] args) {
@@ -300,16 +293,14 @@ public class DBHelper {
 				
 				list.add(map);
 			}
+			
 			return list;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error("sql error", e);
+			throw new RuntimeException("sql error", e);
 		} finally {
 			close(rs, st, conn);
 		}
-		
-		return null;
 	}
 	
 	public Integer queryForInt(String sql, Object[] args) {
@@ -332,10 +323,9 @@ public class DBHelper {
 			if (rs.next()) {// 每循环一次是一行
 				return rs.getInt(1);
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error("sql error", e);
+			throw new RuntimeException("sql error", e);
 		} finally {
 			close(rs, st, conn);
 		}
@@ -343,46 +333,6 @@ public class DBHelper {
 		return null;
 	}
 	
-	public  String queryAsJson(String sql) {
-		Connection conn = null;
-		Statement st = null;
-		ResultSet rs = null;
-		StringBuffer sb = new StringBuffer();
-		sb.append("[");
-		try {
-			conn = getConnection();
-			st = conn.createStatement();
-			rs = st.executeQuery(sql);
-			ResultSetMetaData rsmd = rs.getMetaData();
-			while (rs.next()) {// 每循环一次是一行
-				sb.append("{");
-				for (int i = 1; i <= rsmd.getColumnCount(); i++) {// 每循环一次是一列
-					// 列名
-					String key = rsmd.getColumnName(i);
-					// 对应于当前行，当前列的数据
-					String value = rs.getString(key);
-					sb.append("'" + key + "':'" + value + "'");
-					if (i != rsmd.getColumnCount()) {
-						sb.append(",");
-					}
-				}
-				sb.append("}");
-				sb.append(",");
-			}
-			if (!"[".equals(sb.toString())) {
-				sb = new StringBuffer(sb.substring(0, sb.length() - 1));
-			}
-			sb.append("]");
-			return sb.toString();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			close(rs, st, conn);
-		}
-		return null;
-	}
 
 	/**
 	 * 执行增删改操作
@@ -400,13 +350,13 @@ public class DBHelper {
 			if (cnt > 0) {
 				return true;
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error("sql error", e);
+			throw new RuntimeException("sql error", e);
 		} finally {
 			close(null, st, conn);
 		}
+		
 		return false;
 	}
 

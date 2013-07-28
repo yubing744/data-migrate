@@ -140,7 +140,7 @@ public class JdbcReader implements PageReader {
 							cellData.setData(null);
 						}
 						
-						record.addDataField(key, cellData);
+						record.addDataField(cellData);
 					}
 				}
 				

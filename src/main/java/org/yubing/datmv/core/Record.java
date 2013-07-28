@@ -1,7 +1,7 @@
 package org.yubing.datmv.core;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.Iterator;
+
 
 /**
  * 迁移记录接口
@@ -17,50 +17,42 @@ public interface Record {
 	 * @param key
 	 * @param dataField
 	 */
-	void addDataField(String key, DataField dataField);
+	void addDataField(DataField dataField);
 
 	/**
 	 * 删除一项数据域
 	 * 
 	 * @param key
 	 */
-	void removeDataField(String key);
+	void removeDataField(String name);
 	
 	/**
 	 * 获取数据域
 	 * 
-	 * @param key
+	 * @param name
 	 * @return
 	 */
-	DataField getDataField(String key);
+	DataField getDataField(String name);
 	
 	/**
 	 * 获取记录列数
 	 * 
 	 * @return
 	 */
-	int getColSize();
+	int size();
 	
-	
-	/**
-	 * 获取记录索引集合
-	 * 
-	 * @return
-	 */
-	Set<String> keySet();
-
 	/**
 	 * 获取域数据
 	 * 
-	 * @param key
+	 * @param name
 	 * @return
 	 */
-	Object getFieldData(String key);
-
+	Object getFieldData(String name);
+	
 	/**
-	 * 把当前记录值转换为一个Map
+	 * 获取迭代器
 	 * 
 	 * @return
 	 */
-	Map<String, Object> toMap();
+	Iterator<DataField> iterator();
 }

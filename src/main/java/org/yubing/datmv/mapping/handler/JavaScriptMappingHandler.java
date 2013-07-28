@@ -3,10 +3,12 @@ package org.yubing.datmv.mapping.handler;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.yubing.datmv.core.ConfigItem;
 import org.yubing.datmv.core.DataField;
 import org.yubing.datmv.core.MappingHandler;
 import org.yubing.datmv.core.RecordContext;
 import org.yubing.datmv.script.ScriptEvaluater;
+import org.yubing.datmv.util.RecordUtils;
 import org.yubing.datmv.util.ReflectUtils;
 import org.yubing.datmv.util.config.Configuration;
 
@@ -30,13 +32,14 @@ public class JavaScriptMappingHandler implements MappingHandler {
 		this.evaler = (ScriptEvaluater) ReflectUtils.newInstance(implClass);
 	}
 
-	public DataField mapFrom(DataField targetField, RecordContext context) {
+	public DataField mapFrom(DataField targetField, ConfigItem configItem, RecordContext context) {
 		Object data = targetField.getData();
 		
 		Map<String, Object> content = new HashMap<String, Object>();
 		content.put("context", context);
 		content.put("data", data);
-
+		content.put("record", RecordUtils.toMap(context.getSource()));
+		
 		Object val = evaler.evaluate(content, script);
 		targetField.setData(val);
 

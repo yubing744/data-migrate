@@ -1,7 +1,6 @@
 package org.yubing.datmv.core.internal;
 
 import java.util.Iterator;
-import java.util.Set;
 
 import org.yubing.datmv.core.DataField;
 import org.yubing.datmv.core.MigrateContext;
@@ -57,10 +56,8 @@ public class ConsolePagePreview implements PagePreview {
 				StringBuilder sb = new StringBuilder();
 				
 				if (record != null) {
-					Set<String> keys = record.keySet();
-					for (Iterator<String> it = keys.iterator(); it.hasNext();) {
-						String key = it.next();
-						DataField dataField = record.getDataField(key);
+					for (Iterator<DataField> it = record.iterator(); it.hasNext();) {
+						DataField dataField = it.next();
 						sb.append(dataField.getName()).append("\t");
 					}
 				}
@@ -74,10 +71,8 @@ public class ConsolePagePreview implements PagePreview {
 		StringBuilder sb = new StringBuilder();
 		
 		if (record != null) {
-			Set<String> keys = record.keySet();
-			for (Iterator<String> it = keys.iterator(); it.hasNext();) {
-				String key = it.next();
-				DataField dataField = record.getDataField(key);
+			for (Iterator<DataField> it = record.iterator(); it.hasNext();) {
+				DataField dataField = it.next();
 				if (dataField != null) {
 					String shortContent = regularData(String.valueOf(dataField.getData()));
 					sb.append(shortContent).append("\t");

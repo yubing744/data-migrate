@@ -12,8 +12,8 @@ public interface MappingHandler {
 	 * 根据原记录映射出目标数据域
 	 * 
 	 * @param source
-	 * @param sourceField
+	 * @param targetField
 	 * @return
 	 */
-	DataField mapFrom(DataField targetField, RecordContext context);
+	DataField mapFrom(DataField targetField, ConfigItem configItem, RecordContext context);
 }

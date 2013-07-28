@@ -16,10 +16,10 @@ public class SimpleMigrateContext implements MigrateContext {
 
 	protected MigrateContext parent;
 	
-	private Map<String, String> paramsMap = new HashMap<String, String>();
-	private Map<String, Object> attrMap = new HashMap<String, Object>();
+	protected Map<String, String> paramsMap = new HashMap<String, String>();
+	protected Map<String, Object> attrMap = new HashMap<String, Object>();
 	
-	private MigrateConfig migrateConfig;
+	protected MigrateConfig migrateConfig;
 
 	public SimpleMigrateContext() {
 		this.parent = null;
@@ -73,7 +73,7 @@ public class SimpleMigrateContext implements MigrateContext {
 			result = attrMap.get(key);
 		}
 		
-		if (this.parent != null) {
+		if (result==null && this.parent != null) {
 			result = this.parent.getAttribute(key);
 		}
 		
@@ -88,7 +88,7 @@ public class SimpleMigrateContext implements MigrateContext {
 			result = paramsMap.get(key);
 		}
 		
-		if (this.parent != null) {
+		if (result==null && this.parent != null) {
 			result = this.parent.getParameter(key);
 		}
 
