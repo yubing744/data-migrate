@@ -10,7 +10,9 @@ import java.util.Set;
 
 import jxl.Sheet;
 import jxl.Workbook;
+import jxl.format.Alignment;
 import jxl.write.Label;
+import jxl.write.WritableCellFormat;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
@@ -182,6 +184,11 @@ public class ExcelWriter implements PageWriter {
 		Object data = dataField.getData();
 		
 		Label labelCF = new Label(colNum, rowNum, String.valueOf(data));
+
+		WritableCellFormat RwcfF = new WritableCellFormat();
+		RwcfF.setAlignment(Alignment.RIGHT);
+		labelCF.setCellFormat(RwcfF);
+		
 		ws.addCell(labelCF);
 		
 		return new Size(1, 1);

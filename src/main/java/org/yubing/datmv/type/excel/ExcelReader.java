@@ -6,6 +6,7 @@ import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 
+import org.apache.commons.lang.StringUtils;
 import org.yubing.datmv.core.DataType;
 import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageReader;
@@ -54,6 +55,8 @@ public class ExcelReader implements PageReader {
 			this.totalLine = sheet.getRows();
 			this.colSize = sheet.getColumns();
 			
+			checkTotalLine();
+			
 			if (this.hasHeader) {
 				this.headers = readLineDatas();
 			}
@@ -63,10 +66,25 @@ public class ExcelReader implements PageReader {
 		}
 	}
 
-	
+	private void checkTotalLine() {
+		int lineCount = 0;
+		
+		for (int r = 0; r < this.totalLine; r++) {
+			Cell cell = sheet.getCell(0, r);
+			String cellContents = cell.getContents();
+			
+			if (StringUtils.isBlank(cellContents)) {
+				break;
+			}
+			
+			lineCount++;
+		}
+		
+		this.totalLine = lineCount;
+	}
 
 	public boolean hasNext() {
-		return this.curLine < this.totalLine - 1;
+		return this.curLine < this.totalLine;
 	}
 
 	private String[] readLineDatas() {

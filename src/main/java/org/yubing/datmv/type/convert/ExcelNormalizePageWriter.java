@@ -33,6 +33,7 @@ public class ExcelNormalizePageWriter extends ExcelWriter {
 		
 		if (data instanceof RecordPage) {
 			RecordPage page = (RecordPage)data;
+			page.reset();
 			size = super.writePage(page, colNum, rowNum, transpose);
 		} else {
 			size = super.writeDataField(dataField, colNum, rowNum, transpose);

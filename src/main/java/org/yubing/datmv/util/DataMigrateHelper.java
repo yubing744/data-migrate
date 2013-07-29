@@ -6,7 +6,11 @@ import java.util.Map;
 import org.yubing.datmv.config.xml.XmlMigrateConfig;
 import org.yubing.datmv.core.DataMigrater;
 import org.yubing.datmv.core.MigrateConfig;
+import org.yubing.datmv.core.PageReader;
+import org.yubing.datmv.core.PageWriter;
+import org.yubing.datmv.type.excel.ExcelWriter;
 import org.yubing.datmv.type.mem.list.map.ListMapWriter;
+import org.yubing.datmv.type.mem.list.object.ListObjectReader;
 import org.yubing.datmv.type.mem.map.MapWriter;
 
 public class DataMigrateHelper {
@@ -104,5 +108,22 @@ public class DataMigrateHelper {
 		XmlMigrateConfig xmc = new XmlMigrateConfig(config);
 		dm.setMigrateConfig(xmc);
 		dm.preview();
+	}
+
+	/**
+	 * 写入
+	 * 
+	 * @param reader
+	 * @param writer
+	 */
+	public static void writeTo(PageReader reader, PageWriter writer) {
+		DataMigrater dm = new DataMigrater();
+		XmlMigrateConfig xmc = new XmlMigrateConfig();
+		
+		xmc.setSourceReader(reader);
+		xmc.setTargetWriter(writer);
+		
+		dm.setMigrateConfig(xmc);
+		dm.migrate();
 	}
 }
