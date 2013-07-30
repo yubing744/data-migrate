@@ -19,6 +19,7 @@ import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
 import org.yubing.datmv.core.DataField;
+import org.yubing.datmv.core.DataType;
 import org.yubing.datmv.core.MigrateContext;
 import org.yubing.datmv.core.PageWriter;
 import org.yubing.datmv.core.Record;
@@ -185,9 +186,11 @@ public class ExcelWriter implements PageWriter {
 		
 		Label labelCF = new Label(colNum, rowNum, String.valueOf(data));
 
-		WritableCellFormat RwcfF = new WritableCellFormat();
-		RwcfF.setAlignment(Alignment.RIGHT);
-		labelCF.setCellFormat(RwcfF);
+		if (DataType.isNumber(dataField.getType())) {
+			WritableCellFormat RwcfF = new WritableCellFormat();
+			RwcfF.setAlignment(Alignment.RIGHT);
+			labelCF.setCellFormat(RwcfF);
+		}
 		
 		ws.addCell(labelCF);
 		
