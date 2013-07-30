@@ -7,6 +7,7 @@ package org.yubing.datmv.core;
  */
 public class DataType {
 	public static final String STRING = "string";
+	public static final String NUMBER = "number";
 	
 	public static final String SHORT = "short";
 	public static final String INTEGER = "int";
@@ -23,7 +24,7 @@ public class DataType {
 	public static final String OBJECT = "object";
 
 	
-	public static final String[] NUMBER = new String[]{INTEGER, FLOAT, SHORT, LONG, DOUBLE};
+	public static final String[] NUMBERS = new String[]{INTEGER, FLOAT, SHORT, LONG, DOUBLE, NUMBER};
 	
 	/**
 	 * 判断该类型是否为数字
@@ -36,8 +37,8 @@ public class DataType {
 			return false;
 		}
 		
-		for (int i = 0; i < NUMBER.length; i++) {
-			if (NUMBER[i].equals(type)) {
+		for (int i = 0; i < NUMBERS.length; i++) {
+			if (NUMBERS[i].equals(type)) {
 				return true;
 			}
 		}

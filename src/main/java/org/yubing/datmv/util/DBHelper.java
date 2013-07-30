@@ -333,6 +333,65 @@ public class DBHelper {
 		return null;
 	}
 	
+	public Double queryForDouble(String sql, Object[] args) {
+		Connection conn = null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+
+		try {
+			conn = getConnection();
+			st = conn.prepareStatement(sql);
+			
+			if (args != null) {
+				for (int i = 0; i < args.length; i++) {
+					st.setObject(i + 1, args[i]);
+				}
+			}
+			
+			rs = st.executeQuery();
+			
+			if (rs.next()) {// 每循环一次是一行
+				return rs.getDouble(1);
+			}
+		} catch (Exception e) {
+			log.error("sql error", e);
+			throw new RuntimeException("sql error", e);
+		} finally {
+			close(rs, st, conn);
+		}
+		
+		return null;
+	}
+	
+	public Object queryForObject(String sql, Object[] args) {
+		Connection conn = null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+
+		try {
+			conn = getConnection();
+			st = conn.prepareStatement(sql);
+			
+			if (args != null) {
+				for (int i = 0; i < args.length; i++) {
+					st.setObject(i + 1, args[i]);
+				}
+			}
+			
+			rs = st.executeQuery();
+			
+			if (rs.next()) {// 每循环一次是一行
+				return rs.getObject(1);
+			}
+		} catch (Exception e) {
+			log.error("sql error", e);
+			throw new RuntimeException("sql error", e);
+		} finally {
+			close(rs, st, conn);
+		}
+		
+		return null;
+	}
 
 	/**
 	 * 执行增删改操作

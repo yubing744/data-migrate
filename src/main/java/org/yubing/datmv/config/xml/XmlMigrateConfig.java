@@ -3,6 +3,7 @@ package org.yubing.datmv.config.xml;
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -34,7 +35,7 @@ import org.yubing.datmv.util.config.Configuration;
  */
 public class XmlMigrateConfig extends AbstractMigrateConfig {
 	protected static final String DEFAULT_XML_CONFIG = "/default-migrate-cfg.xml";
-	protected static final String EXT_XML_CONFIG = "classpath:/ext-migrate-cfg.xml";
+	protected static final String EXT_XML_CONFIGS = "classpath:/migrate-ext-cfg.xml";
 	
 	protected String xmlConfig = null;
 	protected Map<String, ConfigParser> parsers;
@@ -200,6 +201,7 @@ public class XmlMigrateConfig extends AbstractMigrateConfig {
 		if (pageFilterConfigs == null) {
 			pageFilterConfigs = new HashMap<String, FilterConfig>();
 		}
+		
 		return pageFilterConfigs;
 	}
 
@@ -260,9 +262,24 @@ public class XmlMigrateConfig extends AbstractMigrateConfig {
 	 */
 	protected void parseInitConfig() {
 		parseConfigFromClassPath(DEFAULT_XML_CONFIG);
+		parseExtXmlConfigs(Configuration.getValue("migrate.ext.configs", EXT_XML_CONFIGS));
 		
-		parseXmlConfig(Configuration.getValue("ext.migrate.config", EXT_XML_CONFIG));
 		parseXmlConfig(xmlConfig);
+	}
+
+	/**
+	 * 解析扩展配置
+	 * 
+	 * @param configs
+	 */
+	private void parseExtXmlConfigs(String configs) {
+		if (!StringUtils.isBlank(configs)) {
+			String[] files = configs.split(",");
+			
+			for (int i = 0; i < files.length; i++) {
+				parseXmlConfig(files[i]);
+			}
+		}
 	}
 
 	/**
