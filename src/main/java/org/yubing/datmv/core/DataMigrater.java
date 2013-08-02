@@ -257,6 +257,7 @@ public class DataMigrater {
 					pageReader.open(context);
 					if (!previewMode)
 						pageWriter.open(context);
+					
 					pageMigrater.init(context);
 					initPageFilters(filters, context);
 					
@@ -286,13 +287,14 @@ public class DataMigrater {
 						pageCount++;
 					}
 					
+					pageMigrater.destroy();
+					
 					fireEvent(MigrateEvents.END);
 				} finally {
 					pagePreview.release();
 					pageReader.release();
 					if (!previewMode)
 						pageWriter.release();
-					pageMigrater.destroy();
 				}
 			}
 		} catch (Exception e) {

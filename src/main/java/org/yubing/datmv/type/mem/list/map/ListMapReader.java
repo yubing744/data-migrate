@@ -59,8 +59,9 @@ public class ListMapReader extends ArrayList<Map<String, Object>> implements Pag
 		List<Map<String, Object>> dataPage = this; 
 		
 		int readSize = 0;
-	 
-		for (int readLine = curLine; readLine < this.size(); readLine++) {
+		int endLine = (curLine + pageSize) > dataPage.size() ? dataPage.size() : curLine + pageSize;
+		
+		for (int readLine = curLine; readLine < endLine; readLine++) {
 			readSize++;
 			
 			Record record = new SimpleRecord();

@@ -75,15 +75,19 @@ public class ExcelWriter implements PageWriter {
 
 	public ExcelWriter() {}
 
-	public ExcelWriter(String filePath) throws FileNotFoundException {
+	public ExcelWriter(String filePath) {
 		this.excelPath = filePath;
 		
 		File file = new File(this.excelPath);
-		if (!file.exists()) {
-			throw new RuntimeException("can not find file:" + this.excelPath);
+		if (!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
 		}
 
-		os = new FileOutputStream(file);
+		try {
+			os = new FileOutputStream(file);
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException("can not find file:" + this.excelPath, e);
+		}
 	}
 
 	public ExcelWriter(OutputStream outputStream) {
