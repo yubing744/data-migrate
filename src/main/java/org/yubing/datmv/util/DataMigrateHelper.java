@@ -1,5 +1,6 @@
 package org.yubing.datmv.util;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -8,9 +9,9 @@ import org.yubing.datmv.core.DataMigrater;
 import org.yubing.datmv.core.MigrateConfig;
 import org.yubing.datmv.core.PageReader;
 import org.yubing.datmv.core.PageWriter;
-import org.yubing.datmv.type.excel.ExcelWriter;
+import org.yubing.datmv.type.excel.ExcelReader;
 import org.yubing.datmv.type.mem.list.map.ListMapWriter;
-import org.yubing.datmv.type.mem.list.object.ListObjectReader;
+import org.yubing.datmv.type.mem.list.string.ListStringWriter;
 import org.yubing.datmv.type.mem.map.MapWriter;
 
 public class DataMigrateHelper {
@@ -86,6 +87,41 @@ public class DataMigrateHelper {
 		return loadListMap(config, null);
 	}
 
+	/**
+	 * 加载列表字符串
+	 * 
+	 * @param config
+	 * @param reader
+	 * @return
+	 */
+	public static List<String> loadListString(String config, PageReader reader) {
+		DataMigrater dm = new DataMigrater();
+		XmlMigrateConfig xmc = new XmlMigrateConfig(config);
+
+		if (reader != null) {
+			xmc.setSourceReader(reader);
+		}
+		
+		ListStringWriter list = new ListStringWriter();
+		xmc.setTargetWriter(list);
+		
+		dm.setMigrateConfig(xmc);
+		
+		dm.migrate();
+		
+		return list;
+	}
+	
+	public static List<String> loadListString(String config) {
+		return loadListString(config, null);
+	}
+	
+	public static List<String> loadListStringFromExcelInputStream(String config, InputStream excelStream) {
+		ExcelReader reader = new ExcelReader(excelStream);
+		reader.setHasHeader(true);
+		return loadListString(config, reader);
+	}
+	
 	/**
 	 * 执行迁移
 	 * 
