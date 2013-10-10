@@ -29,7 +29,7 @@ public class JdbcWriter implements PageWriter {
 	private String modifySql;
 	private Dialect dialect;
 	private String dialectClass;
-	
+	private boolean update = false;
 
 	public JdbcWriter(DataSource dataSource, String dialectClass, String tableName) {
 		this.dataSource = dataSource;
@@ -60,7 +60,11 @@ public class JdbcWriter implements PageWriter {
 
 		while (recPage.hasNext()) {
 			Record record = recPage.readRecord();
-			writeRecord(record);
+			if (this.update) {
+				updateRecord(record);
+			} else {
+				writeRecord(record);
+			}
 		}
 	}
 
@@ -102,6 +106,36 @@ public class JdbcWriter implements PageWriter {
 		}
 	}
 
+	private void updateRecord(Record record) {
+		StringBuilder valDatas = new StringBuilder();
+		List<Object> args = new ArrayList<Object>();
+		
+		if (record != null) {
+			for (Iterator<DataField> it = record.iterator(); it.hasNext();) {
+				DataField dataField = it.next();
+				
+				if (dataField != null) {
+					valDatas.append(dataField.getName()).append("=").append("?").append(",");
+					
+					args.add(dataField.getData());
+				}
+			}
+
+			if (valDatas.length() > 1) {
+				valDatas.setLength(valDatas.length() - 1);
+			}
+		}
+
+		args.add(record.getFieldData("id"));
+		
+		String updateSql = String.format("update `%s` set %s where id=?", this.tableName, valDatas.toString());
+
+		boolean success = dbHelper.update(updateSql, args.toArray(new Object[args.size()]));
+		if (!success) {
+			throw new RuntimeException("Error in sql:" + updateSql);
+		}
+	}
+	
 	public void release() {
 		// TODO Auto-generated method stub
 
