@@ -36,6 +36,7 @@ public class JdbcWriter implements PageWriter {
 		this.tableName = tableName;
 		this.modifySql = null;
 		this.dialectClass = dialectClass;
+		this.update = false;
 	}
 	
 	public JdbcWriter(DataSource dataSource,String dialectClass, String tableName, String modifySql) {
@@ -43,6 +44,23 @@ public class JdbcWriter implements PageWriter {
 		this.tableName = tableName;
 		this.modifySql = modifySql;
 		this.dialectClass = dialectClass;
+		this.update = false;
+	}
+	
+	public JdbcWriter(DataSource dataSource, String dialectClass, String tableName, Boolean update) {
+		this.dataSource = dataSource;
+		this.tableName = tableName;
+		this.modifySql = null;
+		this.dialectClass = dialectClass;
+		this.update = update;
+	}
+	
+	public JdbcWriter(DataSource dataSource,String dialectClass, String tableName, String modifySql, Boolean update) {
+		this.dataSource = dataSource;
+		this.tableName = tableName;
+		this.modifySql = modifySql;
+		this.dialectClass = dialectClass;
+		this.update = update;
 	}
 
 	public void open(MigrateContext context) {
