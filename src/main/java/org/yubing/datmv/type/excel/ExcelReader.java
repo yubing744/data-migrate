@@ -118,7 +118,7 @@ public class ExcelReader implements PageReader {
 			} 
 			
 			if (endColumn == null) {
-				this.endColumn = sheet.getColumns() + 1;
+				this.endColumn = sheet.getColumns();
 			}
 			
 			checkTotalLine();
