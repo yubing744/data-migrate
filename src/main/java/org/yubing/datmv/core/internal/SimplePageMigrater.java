@@ -64,6 +64,9 @@ public class SimplePageMigrater implements PageMigrater, RecordFilter {
 
 			while (recPage.hasNext()) {
 				Record source = recPage.readRecord();
+				
+				updateNumber(migrateContext);
+				
 				Record target = filterRecord(source, context);
 				
 				if (target != null) {
@@ -75,6 +78,16 @@ public class SimplePageMigrater implements PageMigrater, RecordFilter {
 		}
 		
 		return resultPage;
+	}
+
+	protected void updateNumber(MigrateContext migrateContext) {
+		Integer num = (Integer)migrateContext.getAttribute("cur.num");
+		
+		if (num == null) {
+			migrateContext.setAttribute("cur.num", 1);
+		} else {
+			migrateContext.setAttribute("cur.num", num + 1);
+		}
 	}
 
 	public Record filter(Record source, PageContext context, RecordFilterChain chain) {
