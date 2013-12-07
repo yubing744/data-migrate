@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.yubing.datmv.core.internal.SimplePageFilterChain;
+import org.yubing.datmv.exception.MigrateException;
 import org.yubing.datmv.util.config.ConfigInitialer;
 import org.yubing.datmv.util.config.ConfigUtils;
 import org.yubing.datmv.util.config.Configuration;
@@ -297,7 +298,7 @@ public class DataMigrater {
 						pageWriter.release();
 				}
 			}
-		} catch (Exception e) {
+		} catch (MigrateException e) {
 			log.error("migrate error!", e);
 			migrateLog.log(e.getMessage());
 			throw new RuntimeException("migrate error!", e);

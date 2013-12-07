@@ -128,6 +128,8 @@ public class ExcelReader implements PageReader {
 			if (this.hasHeader) {
 				this.headers = readLineDatas();
 			}
+			
+			context.setAttribute("total.record", this.endRow - this.startRow);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error in open " + excelPath, e);
