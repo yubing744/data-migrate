@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-import jxl.Cell;
 import jxl.Workbook;
 import jxl.format.Alignment;
 import jxl.format.CellFormat;
