@@ -1,8 +1,12 @@
 package org.yubing.datmv.type.excel;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 
 import jxl.Cell;
+import jxl.CellType;
+import jxl.DateCell;
+import jxl.NumberCell;
 import jxl.Sheet;
 import jxl.Workbook;
 
@@ -187,8 +191,18 @@ public class ExcelReader implements PageReader {
 
 			for (int c = this.startColumn; c < this.endColumn; c++) {
 				Cell cell = sheet.getCell(c, readRow);
+				
 				String cellContents = cell.getContents();
 				
+				if (cell.getType() == CellType.DATE) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					DateCell dc = (DateCell) cell;
+					cellContents = sdf.format(dc.getDate());
+				} else if (cell.getType() == CellType.NUMBER || cell.getType() == CellType.NUMBER_FORMULA) {
+					NumberCell nc = (NumberCell) cell;
+					cellContents = String.valueOf(nc.getValue());
+				}
+
 				String key = String.valueOf(c);
 				if (this.hasHeader) {
 					key = this.headers[c];
