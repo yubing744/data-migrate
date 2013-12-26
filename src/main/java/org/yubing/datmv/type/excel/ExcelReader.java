@@ -200,7 +200,11 @@ public class ExcelReader implements PageReader {
 					cellContents = sdf.format(dc.getDate());
 				} else if (cell.getType() == CellType.NUMBER || cell.getType() == CellType.NUMBER_FORMULA) {
 					NumberCell nc = (NumberCell) cell;
-					cellContents = String.valueOf(nc.getValue());
+					
+					String content = nc.getContents();
+					String num = String.valueOf(nc.getValue());
+					
+					cellContents = content.contains(".") ? num : content;
 				}
 
 				String key = String.valueOf(c);
