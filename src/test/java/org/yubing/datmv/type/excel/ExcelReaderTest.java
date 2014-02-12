@@ -20,7 +20,8 @@ public class ExcelReaderTest {
 		pagePreview = new ConsolePagePreview();
 	}
 
-	@Test
+
+	/*
 	public void testReadPage() {
 		try {
 			reader.open(null);
@@ -33,4 +34,5 @@ public class ExcelReaderTest {
 			reader.release();
 		}
 	}
+	*/
 }

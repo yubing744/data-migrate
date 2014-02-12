@@ -23,7 +23,7 @@
 				
 			<writer class="org.yubing.datmv.type.jdbc.JdbcWriter" />
 			<writer-constructor-arg-parser
-				class="org.yubing.datmv.config.xml.parser.argment.JdbcConstructorArgParser" />
+				class="org.yubing.datmv.config.xml.parser.argment.JdbcWriterConstructorArgParser" />
 		</migrate-type>
 		<migrate-type name="mem.map">
 			<writer class="org.yubing.datmv.type.mem.map.MapWriter" />

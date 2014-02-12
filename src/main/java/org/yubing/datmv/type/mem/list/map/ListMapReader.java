@@ -47,6 +47,10 @@ public class ListMapReader extends ArrayList<Map<String, Object>> implements Pag
 		
 	}
 	
+	public ListMapReader(List<Map<String, Object>> datas) {
+		this.addAll(datas);
+	}
+	
 	public void open(MigrateContext ctx) {
 		// TODO Auto-generated method stub
 	}

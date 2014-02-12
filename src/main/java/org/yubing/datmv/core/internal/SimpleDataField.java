@@ -1,6 +1,7 @@
 package org.yubing.datmv.core.internal;
 
 import org.yubing.datmv.core.DataField;
+import org.yubing.datmv.core.DataType;
 
 public class SimpleDataField implements DataField {
 
@@ -11,6 +12,12 @@ public class SimpleDataField implements DataField {
 
 	public SimpleDataField() {
 		super();
+	}
+
+	public SimpleDataField(Object data) {
+		this.name = "unkown";
+		this.type = DataType.STRING;
+		this.data = data;
 	}
 
 	public SimpleDataField(String name, String type) {

@@ -6,12 +6,12 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
-import java.util.Set;
 
-import jxl.Sheet;
 import jxl.Workbook;
 import jxl.format.Alignment;
+import jxl.format.CellFormat;
 import jxl.write.Label;
+import jxl.write.WritableCell;
 import jxl.write.WritableCellFormat;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
@@ -57,6 +57,7 @@ public class ExcelWriter implements PageWriter {
 	
 	protected WritableWorkbook wwb;
 	protected WritableSheet ws;
+	protected int sheetIndex = 0;
 	
 	protected int curLine = 0;
 	protected String excelPath;
@@ -75,7 +76,7 @@ public class ExcelWriter implements PageWriter {
 
 	public ExcelWriter() {}
 
-	public ExcelWriter(String filePath) {
+	public ExcelWriter(String filePath, int sheetIndex) {
 		this.excelPath = filePath;
 		
 		File file = new File(this.excelPath);
@@ -88,20 +89,46 @@ public class ExcelWriter implements PageWriter {
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException("can not find file:" + this.excelPath, e);
 		}
+		
+		this.sheetIndex = sheetIndex;
+	}
+	
+	public ExcelWriter(String filePath) {
+		this(filePath, 0);
+	}
+
+	public ExcelWriter(OutputStream outputStream, int sheetIndex) {
+		this.os = outputStream;
+		this.sheetIndex = sheetIndex;
 	}
 
 	public ExcelWriter(OutputStream outputStream) {
 		this.os = outputStream;
+		this.sheetIndex = 0;
 	}
-
+	
+	public ExcelWriter(InputStream inputStream, OutputStream outputStream, int sheetIndex) {
+		this.is = inputStream;
+		this.os = outputStream;
+		this.sheetIndex = sheetIndex;
+	}
+	
 	public ExcelWriter(InputStream inputStream, OutputStream outputStream) {
 		this.is = inputStream;
 		this.os = outputStream;
+		this.sheetIndex = 0;
+	}
+	
+	public ExcelWriter(String excelFile , OutputStream outputStream, int sheetIndex) {
+		this.is = ResourceUtils.openResource(excelFile);
+		this.os = outputStream;
+		this.sheetIndex = sheetIndex;
 	}
 	
 	public ExcelWriter(String excelFile , OutputStream outputStream) {
 		this.is = ResourceUtils.openResource(excelFile);
 		this.os = outputStream;
+		this.sheetIndex = 0;
 	}
 	
 	public void open(MigrateContext context) {
@@ -109,10 +136,10 @@ public class ExcelWriter implements PageWriter {
 			if (this.is != null) {
 				Workbook wb = Workbook.getWorkbook(is);
 				wwb = Workbook.createWorkbook(os, wb);
-				ws = wwb.getSheet(0);
+				ws = wwb.getSheet(this.sheetIndex);
 			} else {
 				wwb = Workbook.createWorkbook(os);
-				ws = wwb.createSheet("sheet1", 0);
+				ws = wwb.createSheet("sheet" + this.sheetIndex, this.sheetIndex);
 			}
 			
 			this.curLine = this.startRow;
@@ -184,19 +211,37 @@ public class ExcelWriter implements PageWriter {
 		return size;
 	}
 
-	protected Size writeDataField(DataField dataField, int colNum, int rowNum, boolean transpose)
+	public Size writeDataField(DataField dataField, int colNum, int rowNum, boolean transpose)
 			throws RowsExceededException, WriteException {
 		Object data = dataField.getData();
 		
-		Label labelCF = new Label(colNum, rowNum, String.valueOf(data));
-
-		if (DataType.isNumber(dataField.getType())) {
-			WritableCellFormat RwcfF = new WritableCellFormat();
-			RwcfF.setAlignment(Alignment.RIGHT);
-			labelCF.setCellFormat(RwcfF);
+		if (data != null) {
+			WritableCell cell = ws.getWritableCell(colNum, rowNum);
+			
+			CellFormat cf = null;
+			
+			if (cell != null) {
+				cf = cell.getCellFormat();
+			} 
+			
+			if (cf == null){
+				WritableCellFormat rwcfF = new WritableCellFormat();
+				rwcfF.setAlignment(Alignment.RIGHT);
+				cf = rwcfF;
+			}
+			
+			Label labelCF = new Label(colNum, rowNum, String.valueOf(data));
+			
+			if (DataType.isNumber(dataField.getType())) {
+				WritableCellFormat RwcfF = new WritableCellFormat(cf);
+				RwcfF.setAlignment(Alignment.RIGHT);
+				labelCF.setCellFormat(RwcfF);
+			} else {
+				labelCF.setCellFormat(cf);
+			}
+			
+			ws.addCell(labelCF);
 		}
-		
-		ws.addCell(labelCF);
 		
 		return new Size(1, 1);
 	}

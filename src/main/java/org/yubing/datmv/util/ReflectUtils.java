@@ -37,6 +37,14 @@ public class ReflectUtils {
 		}
 	}
 
+	public static Object newInstance(Class<?> clazz) {
+		try {
+			return clazz.newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(clazz + "加载失败", e);
+		}
+	}
+	
 	protected static String[] buildClassPaths() {
 		String classPaths = Configuration.getValue("plugin.lib.paths");
 		

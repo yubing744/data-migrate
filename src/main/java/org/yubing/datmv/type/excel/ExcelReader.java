@@ -1,8 +1,12 @@
 package org.yubing.datmv.type.excel;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 
 import jxl.Cell;
+import jxl.CellType;
+import jxl.DateCell;
+import jxl.NumberCell;
 import jxl.Sheet;
 import jxl.Workbook;
 
@@ -25,15 +29,55 @@ import org.yubing.datmv.util.ResourceUtils;
 public class ExcelReader implements PageReader {
 	protected Workbook book;
 	protected Sheet sheet;
-	protected int curLine = 0;
-	protected int colSize;
-	protected int totalLine;
+
 	protected String excelPath;
 	protected InputStream is;
+	protected int sheetIndex = 0;
+	
+	protected Integer startRow = null;
+	protected Integer endRow = null;
+	protected Integer startColumn = null;
+	protected Integer endColumn = null;
+	
+	protected int curRow = 0;
 	
 	protected boolean hasHeader = false;
 	protected String[] headers;
 	
+	
+	
+	public Integer getStartRow() {
+		return startRow;
+	}
+
+	public void setStartRow(Integer startRow) {
+		this.startRow = startRow;
+	}
+
+	public Integer getEndRow() {
+		return endRow;
+	}
+
+	public void setEndRow(Integer endRow) {
+		this.endRow = endRow;
+	}
+
+	public Integer getStartColumn() {
+		return startColumn;
+	}
+
+	public void setStartColumn(Integer startColumn) {
+		this.startColumn = startColumn;
+	}
+
+	public Integer getEndColumn() {
+		return endColumn;
+	}
+
+	public void setEndColumn(Integer endColumn) {
+		this.endColumn = endColumn;
+	}
+
 	public void setHasHeader(boolean hasHeader) {
 		this.hasHeader = hasHeader;
 	}
@@ -41,25 +85,55 @@ public class ExcelReader implements PageReader {
 	public ExcelReader(String filePath) {
 		this.excelPath = filePath;
 		this.is = ResourceUtils.openResource(excelPath);
+		this.sheetIndex = 0;
 	}
 
+	public ExcelReader(String filePath, int sheetIndex) {
+		this.excelPath = filePath;
+		this.is = ResourceUtils.openResource(excelPath);
+		this.sheetIndex = sheetIndex;
+	}
+	
 	public ExcelReader(InputStream is) {
 		this.is = is;
+		this.sheetIndex = 0;
 	}
 
+	public ExcelReader(InputStream is, int sheetIndex) {
+		this.is = is;
+		this.sheetIndex = sheetIndex;
+	}
+	
 	public void open(MigrateContext context) {
 		try {
 			book = Workbook.getWorkbook(this.is);
-			sheet = book.getSheet(0);
+			sheet = book.getSheet(sheetIndex);
 
-			this.totalLine = sheet.getRows();
-			this.colSize = sheet.getColumns();
+			if (startRow == null) {
+				this.startRow = 0;
+			} 
+			
+			if (endRow == null) {
+				this.endRow = sheet.getRows();
+			} 
+			
+			if (startColumn == null) {
+				this.startColumn = 0;
+			} 
+			
+			if (endColumn == null) {
+				this.endColumn = sheet.getColumns();
+			}
 			
 			checkTotalLine();
+			
+			this.curRow = this.startRow;
 			
 			if (this.hasHeader) {
 				this.headers = readLineDatas();
 			}
+			
+			context.setAttribute("total.record", this.endRow - this.startRow);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error in open " + excelPath, e);
@@ -67,63 +141,72 @@ public class ExcelReader implements PageReader {
 	}
 
 	private void checkTotalLine() {
-		int lineCount = 0;
+		int curRow = 0;
 		
-		for (int r = 0; r < this.totalLine; r++) {
-			Cell cell = sheet.getCell(0, r);
+		for (int r = this.startRow; r < this.endRow; r++) {
+			Cell cell = sheet.getCell(this.startColumn, r);
 			String cellContents = cell.getContents();
 			
 			if (StringUtils.isBlank(cellContents)) {
 				break;
 			}
 			
-			lineCount++;
+			curRow = r;
 		}
 		
-		this.totalLine = lineCount;
+		this.endRow = curRow + 1;
 	}
 
 	public boolean hasNext() {
-		return this.curLine < this.totalLine;
+		return this.curRow < this.endRow;
 	}
 
 	private String[] readLineDatas() {
-		int colSize = this.colSize;
-		int curLine = this.curLine;
+		int startLine = this.curRow;
 		
-		int startLine = curLine;
+		String[] datas = new String[this.endColumn - this.startColumn];
 		
-		String[] headers = new String[colSize];
-		
-		for (int c = 0; c < colSize; c++) {
+		for (int c = this.startColumn; c < this.endColumn; c++) {
 			Cell cell = sheet.getCell(c, startLine);
 			String cellContents = cell.getContents();
-			headers[c] = cellContents;
+			datas[c] = cellContents;
 		}
 		
-		this.curLine++;
+		this.curRow++;
 		
-		return headers;
+		return datas;
 	}
 	
 	public RecordPage readPage(int pageSize) {
-		int colSize = this.colSize;
-		int curLine = this.curLine;
-		int totalLine = this.totalLine;
+		int curRow = this.curRow;
+		int endRow = this.endRow;
 
-		int startLine = curLine;
-		int endLine = curLine + pageSize;
+		int maxEndRow = this.curRow + pageSize;
 
 		RecordPage page = new SimpleRecordPage(pageSize);
 
-		for (int readLine = startLine; readLine < endLine
-				&& readLine < totalLine; readLine++) {
+		for (int readRow = curRow; readRow < maxEndRow
+				&& readRow < endRow; readRow++) {
 			Record record = new SimpleRecord();
 
-			for (int c = 0; c < colSize; c++) {
-				Cell cell = sheet.getCell(c, readLine);
+			for (int c = this.startColumn; c < this.endColumn; c++) {
+				Cell cell = sheet.getCell(c, readRow);
+				
 				String cellContents = cell.getContents();
 				
+				if (cell.getType() == CellType.DATE) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					DateCell dc = (DateCell) cell;
+					cellContents = sdf.format(dc.getDate());
+				} else if (cell.getType() == CellType.NUMBER || cell.getType() == CellType.NUMBER_FORMULA) {
+					NumberCell nc = (NumberCell) cell;
+					
+					String content = nc.getContents();
+					String num = String.valueOf(nc.getValue());
+					
+					cellContents = content.contains(".") ? num : content;
+				}
+
 				String key = String.valueOf(c);
 				if (this.hasHeader) {
 					key = this.headers[c];
@@ -138,7 +221,8 @@ public class ExcelReader implements PageReader {
 			page.writeRecord(record);
 		}
 
-		this.curLine = Math.min(endLine, totalLine);
+		this.curRow = Math.min(maxEndRow, endRow);
+		
 		return page;
 	}
 

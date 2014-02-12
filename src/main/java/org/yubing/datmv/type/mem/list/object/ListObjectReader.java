@@ -1,6 +1,5 @@
 package org.yubing.datmv.type.mem.list.object;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
