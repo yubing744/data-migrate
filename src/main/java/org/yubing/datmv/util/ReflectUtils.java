@@ -21,7 +21,8 @@ import org.yubing.datmv.util.config.Configuration;
 public class ReflectUtils {
 
 	protected static final String EXT_CLASSPATH = System.getProperty("user.dir") + "/libs/";
-
+	protected static ClassLoader extClassLoader = null;
+	
 	/**
 	 * 根据类名创建类实例
 	 * 
@@ -67,32 +68,36 @@ public class ReflectUtils {
 		} 
 	}
 
-	protected static ClassLoader getExtClassLoader()
+	protected static synchronized ClassLoader getExtClassLoader()
 			throws MalformedURLException {
-		String[] classPaths = buildClassPaths();
-		List<URL> urls = new ArrayList<URL>();
-		
-		for (int i = 0; i < classPaths.length; i++) {
-			File file = new File(classPaths[i]);
+		if (extClassLoader == null) {
+			String[] classPaths = buildClassPaths();
+			List<URL> urls = new ArrayList<URL>();
 			
-			if (file.exists()) {
-				if (file.isDirectory()) {
-					File[] jars = file.listFiles(new FilenameFilter(){
-						public boolean accept(File dir, String name) {
-							return name.endsWith(".jar");
+			for (int i = 0; i < classPaths.length; i++) {
+				File file = new File(classPaths[i]);
+				
+				if (file.exists()) {
+					if (file.isDirectory()) {
+						File[] jars = file.listFiles(new FilenameFilter(){
+							public boolean accept(File dir, String name) {
+								return name.endsWith(".jar");
+							}
+						});
+						
+						for (int j = 0; j < jars.length; j++) {
+							urls.add(jars[j].toURI().toURL());
 						}
-					});
-					
-					for (int j = 0; j < jars.length; j++) {
-						urls.add(jars[j].toURI().toURL());
+					} else {
+						urls.add(file.toURI().toURL());
 					}
-				} else {
-					urls.add(file.toURI().toURL());
 				}
 			}
-		}
 
-		return new URLClassLoader(urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader());
+			extClassLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader());
+		}
+		
+		return extClassLoader;
 	}
 	
 	/**
