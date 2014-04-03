@@ -8,7 +8,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.yubing.datmv.util.config.Configuration;
 
@@ -21,7 +24,7 @@ import org.yubing.datmv.util.config.Configuration;
 public class ReflectUtils {
 
 	protected static final String EXT_CLASSPATH = System.getProperty("user.dir") + "/libs/";
-	protected static ClassLoader extClassLoader = null;
+	protected static Map<String, ClassLoader> cacheClassLoaders = new HashMap<String, ClassLoader>();
 	
 	/**
 	 * 根据类名创建类实例
@@ -70,34 +73,50 @@ public class ReflectUtils {
 
 	protected static synchronized ClassLoader getExtClassLoader()
 			throws MalformedURLException {
-		if (extClassLoader == null) {
-			String[] classPaths = buildClassPaths();
-			List<URL> urls = new ArrayList<URL>();
+		 
+		String[] classPaths = buildClassPaths();
+		List<URL> urls = new ArrayList<URL>();
+		
+		for (int i = 0; i < classPaths.length; i++) {
+			File file = new File(classPaths[i]);
 			
-			for (int i = 0; i < classPaths.length; i++) {
-				File file = new File(classPaths[i]);
-				
-				if (file.exists()) {
-					if (file.isDirectory()) {
-						File[] jars = file.listFiles(new FilenameFilter(){
-							public boolean accept(File dir, String name) {
-								return name.endsWith(".jar");
-							}
-						});
-						
-						for (int j = 0; j < jars.length; j++) {
-							urls.add(jars[j].toURI().toURL());
+			if (file.exists()) {
+				if (file.isDirectory()) {
+					File[] jars = file.listFiles(new FilenameFilter(){
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".jar");
 						}
-					} else {
-						urls.add(file.toURI().toURL());
+					});
+					
+					for (int j = 0; j < jars.length; j++) {
+						urls.add(jars[j].toURI().toURL());
 					}
+				} else {
+					urls.add(file.toURI().toURL());
 				}
 			}
-
-			extClassLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader());
 		}
+
+		String key = toKey(urls);
+		ClassLoader extClassLoader = cacheClassLoaders.get(key);
+		
+		if (extClassLoader == null) {
+			extClassLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader());
+			cacheClassLoaders.put(key, extClassLoader);
+		} 
 		
 		return extClassLoader;
+	}
+
+	private static String toKey(List<URL> urls) {
+		StringBuffer sb = new StringBuffer();
+		
+		for (Iterator<URL> it = urls.iterator(); it.hasNext();) {
+			URL url = (URL) it.next();
+			sb.append(url.getPath());
+		}
+		
+		return sb.toString();
 	}
 	
 	/**
