@@ -78,6 +78,30 @@ public class DataMigrateHelper {
 	}
 	
 	/**
+	 * 获取当个数据项
+	 * 
+	 * @param config
+	 * @param params
+	 * @return
+	 */
+	public static Object loadSingleData(String config, Map<String, String> params) {
+		ListMapWriter writer = new ListMapWriter();
+		
+		DataMigrater dm = new DataMigrater();
+		dm.addParameters(params);
+		XmlMigrateConfig xmc = new XmlMigrateConfig(config);
+		dm.setMigrateConfig(xmc);
+		xmc.setTargetWriter(writer);
+		dm.migrate();
+		
+		if (writer.size()>0) {
+			return writer.get(0).values().iterator().next();
+		}
+		
+		return null;
+	}
+	
+	/**
 	 * 加载列表Map
 	 * 
 	 * @param config
@@ -94,7 +118,7 @@ public class DataMigrateHelper {
 	 * @param reader
 	 * @return
 	 */
-	public static List<String> loadListString(String config, PageReader reader) {
+	public static List<String> loadListString(String config, PageReader reader, Map<String, String> params) {
 		DataMigrater dm = new DataMigrater();
 		XmlMigrateConfig xmc = new XmlMigrateConfig(config);
 
@@ -107,13 +131,25 @@ public class DataMigrateHelper {
 		
 		dm.setMigrateConfig(xmc);
 		
+		if (params != null) {
+			dm.addParameters(params);
+		}
+		
 		dm.migrate();
 		
 		return list;
 	}
 	
+	public static List<String> loadListString(String config, PageReader reader) {
+		return loadListString(config, reader, (Map<String, String>)null);
+	}
+	
+	public static List<String> loadListString(String config, Map<String, String> params) {
+		return loadListString(config, null, params);
+	}
+	
 	public static List<String> loadListString(String config) {
-		return loadListString(config, null);
+		return loadListString(config, null, null);
 	}
 	
 	public static List<String> loadListStringFromExcelInputStream(String config, InputStream excelStream) {

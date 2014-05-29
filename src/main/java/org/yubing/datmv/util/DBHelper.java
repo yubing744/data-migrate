@@ -156,8 +156,8 @@ public class DBHelper {
 				return rs.getString(1);
 			}
 		} catch (Exception e) {
-			log.error("sql error", e);
-			throw new RuntimeException("sql error", e);
+			log.error("sql error: " + sql, e);
+			throw new RuntimeException("sql error: " + sql, e);
 		} finally {
 			close(rs, st, conn);
 		}
