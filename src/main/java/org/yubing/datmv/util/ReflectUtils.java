@@ -8,7 +8,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.yubing.datmv.util.config.Configuration;
 
@@ -21,7 +24,8 @@ import org.yubing.datmv.util.config.Configuration;
 public class ReflectUtils {
 
 	protected static final String EXT_CLASSPATH = System.getProperty("user.dir") + "/libs/";
-
+	protected static Map<String, ClassLoader> cacheClassLoaders = new HashMap<String, ClassLoader>();
+	
 	/**
 	 * 根据类名创建类实例
 	 * 
@@ -67,8 +71,9 @@ public class ReflectUtils {
 		} 
 	}
 
-	protected static ClassLoader getExtClassLoader()
+	protected static synchronized ClassLoader getExtClassLoader()
 			throws MalformedURLException {
+		 
 		String[] classPaths = buildClassPaths();
 		List<URL> urls = new ArrayList<URL>();
 		
@@ -92,7 +97,26 @@ public class ReflectUtils {
 			}
 		}
 
-		return new URLClassLoader(urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader());
+		String key = toKey(urls);
+		ClassLoader extClassLoader = cacheClassLoaders.get(key);
+		
+		if (extClassLoader == null) {
+			extClassLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader());
+			cacheClassLoaders.put(key, extClassLoader);
+		} 
+		
+		return extClassLoader;
+	}
+
+	private static String toKey(List<URL> urls) {
+		StringBuffer sb = new StringBuffer();
+		
+		for (Iterator<URL> it = urls.iterator(); it.hasNext();) {
+			URL url = (URL) it.next();
+			sb.append(url.getPath());
+		}
+		
+		return sb.toString();
 	}
 	
 	/**

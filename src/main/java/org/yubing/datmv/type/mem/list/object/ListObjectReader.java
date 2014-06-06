@@ -1,6 +1,7 @@
 package org.yubing.datmv.type.mem.list.object;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,16 @@ public class ListObjectReader extends ArrayList<Object> implements PageReader{
 		supportTypes.put(Boolean.class, DataType.BOOLEAN);
 	}
 	
+	
+	public ListObjectReader() {
+		super();
+	}
+
+
+	public ListObjectReader(Collection<? extends Object> c) {
+		super(c);
+	}
+
 	public void open(MigrateContext ctx) {
 		// TODO Auto-generated method stub
 	}

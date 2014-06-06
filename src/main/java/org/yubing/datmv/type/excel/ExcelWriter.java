@@ -232,6 +232,7 @@ public class ExcelWriter implements PageWriter {
 			
 			Label labelCF = new Label(colNum, rowNum, String.valueOf(data));
 			
+			/*
 			if (DataType.isNumber(dataField.getType())) {
 				WritableCellFormat RwcfF = new WritableCellFormat(cf);
 				RwcfF.setAlignment(Alignment.RIGHT);
@@ -239,6 +240,7 @@ public class ExcelWriter implements PageWriter {
 			} else {
 				labelCF.setCellFormat(cf);
 			}
+			*/
 			
 			ws.addCell(labelCF);
 		}

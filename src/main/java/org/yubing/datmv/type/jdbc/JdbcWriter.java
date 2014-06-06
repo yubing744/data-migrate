@@ -132,7 +132,7 @@ public class JdbcWriter implements PageWriter {
 			for (Iterator<DataField> it = record.iterator(); it.hasNext();) {
 				DataField dataField = it.next();
 				
-				if (dataField != null) {
+				if (dataField != null && !"id".equals(dataField.getName())) {
 					valDatas.append(dataField.getName()).append("=").append("?").append(",");
 					
 					args.add(dataField.getData());
