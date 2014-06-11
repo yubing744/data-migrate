@@ -58,6 +58,25 @@ public class DataMigrateHelper {
 		return map;
 	}
 
+    /**
+     * 加载Map
+     *
+     * @param config
+     * @return
+     */
+    public static<K,V> Map<K, V> loadMap(String config, Map<String, String> params) {
+        MapWriter<K, V> map = new MapWriter<K, V>();
+
+        DataMigrater dm = new DataMigrater();
+        dm.addParameters(params);
+        XmlMigrateConfig xmc = new XmlMigrateConfig(config);
+        dm.setMigrateConfig(xmc);
+        xmc.setTargetWriter(map);
+        dm.migrate();
+
+        return map;
+    }
+
 	/**
 	 * 加载表数据
 	 * 
