@@ -10,7 +10,9 @@ import java.sql.SQLException;
  * Author: Wu Cong-Wen Date: 2011-7-9
  */
 public class DataSource {
-	
+    private Integer TRY_CONNECTION_COUNT = 0;
+    private Integer TRY_CONNECTION_SUM = 10;
+
 	private String driverClass;
 	private String url;
 	private String username;
@@ -18,9 +20,22 @@ public class DataSource {
 
 	public Connection getConnection() throws ClassNotFoundException,
 			SQLException {
+        Connection connection = null;
+
 		Class.forName(driverClass);
-		return DriverManager.getConnection(url, username, password);
-	}
+
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+        }catch (SQLException e) {
+            TRY_CONNECTION_COUNT ++;
+
+            if(TRY_CONNECTION_COUNT <= TRY_CONNECTION_SUM){
+                return getConnection();
+            }
+        }
+
+        return connection;
+    }
 
 	public String getDriverClass() {
 		return driverClass;
