@@ -1,16 +1,6 @@
 package org.yubing.datmv.type.jdbc;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.yubing.datmv.core.DataType;
-import org.yubing.datmv.core.MigrateContext;
-import org.yubing.datmv.core.PageReader;
-import org.yubing.datmv.core.Record;
-import org.yubing.datmv.core.RecordPage;
+import org.yubing.datmv.core.*;
 import org.yubing.datmv.core.internal.SimpleDataField;
 import org.yubing.datmv.core.internal.SimpleRecord;
 import org.yubing.datmv.core.internal.SimpleRecordPage;
@@ -18,6 +8,12 @@ import org.yubing.datmv.util.DBHelper;
 import org.yubing.datmv.util.DataSource;
 import org.yubing.datmv.util.ReflectUtils;
 import org.yubing.datmv.util.config.ConfigUtils;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * 通过JDBC读取数据库表记录
@@ -86,6 +82,7 @@ public class JdbcReader implements PageReader {
 		}
 		
 		totalLine = findTotalLine();
+        context.setAttribute("total.record", totalLine);
 	}
 
 	protected int findTotalLine() {
