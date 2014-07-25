@@ -9,7 +9,6 @@ import org.yubing.datmv.core.RecordContext;
 public class DefaultValueHandler implements MappingHandler {
     private final static String DEFAULT_VALUE = "无信息";
 
-	@Override
 	public DataField mapFrom(DataField targetField, ConfigItem configItem,
 			RecordContext context) {
 		Object data = targetField.getData();
