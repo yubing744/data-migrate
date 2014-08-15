@@ -1,6 +1,7 @@
 package org.yubing.datmv.core;
 
 import java.util.Iterator;
+import java.util.Map;
 
 
 /**
@@ -55,4 +56,11 @@ public interface Record {
 	 * @return
 	 */
 	Iterator<DataField> iterator();
+
+	/**
+	 * 转换为Map
+	 * 
+	 * @return
+	 */
+	Map<String, Object> toMap();
 }

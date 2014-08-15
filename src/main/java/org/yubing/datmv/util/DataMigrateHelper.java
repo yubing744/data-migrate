@@ -6,9 +6,11 @@ import java.util.Map;
 
 import org.yubing.datmv.config.xml.XmlMigrateConfig;
 import org.yubing.datmv.core.DataMigrater;
+import org.yubing.datmv.core.DataType;
 import org.yubing.datmv.core.MigrateConfig;
 import org.yubing.datmv.core.PageReader;
 import org.yubing.datmv.core.PageWriter;
+import org.yubing.datmv.core.internal.SimpleConfigItem;
 import org.yubing.datmv.type.excel.ExcelReader;
 import org.yubing.datmv.type.mem.list.map.ListMapWriter;
 import org.yubing.datmv.type.mem.list.string.ListStringWriter;
@@ -216,5 +218,40 @@ public class DataMigrateHelper {
 		
 		dm.setMigrateConfig(xmc);
 		dm.migrate();
+	}
+
+	/**
+	 * 加载列表数据项，从Excel文件
+	 * 
+	 * @param excelPath
+	 * @param colName
+	 * @return
+	 */
+	public static List<String> loadListStringFromExcel(String excelPath, String colName) {
+		ExcelReader reader = new ExcelReader(excelPath);
+		reader.setHasHeader(true);
+		
+		DataMigrater dm = new DataMigrater();
+		XmlMigrateConfig xmc = new XmlMigrateConfig();
+		
+		SimpleConfigItem sci = new SimpleConfigItem();
+		sci.setName(colName);
+		sci.setType(DataType.STRING);
+		sci.setMappingKey(colName);
+		
+		xmc.addConfigItem(sci);
+		
+		if (reader != null) {
+			xmc.setSourceReader(reader);
+		}
+		
+		ListStringWriter list = new ListStringWriter();
+		xmc.setTargetWriter(list);
+		
+		dm.setMigrateConfig(xmc);
+		
+		dm.migrate();
+		
+		return list;
 	}
 }

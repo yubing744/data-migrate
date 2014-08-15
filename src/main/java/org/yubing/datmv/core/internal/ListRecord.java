@@ -1,7 +1,10 @@
 package org.yubing.datmv.core.internal;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 import org.yubing.datmv.core.DataField;
 import org.yubing.datmv.core.Record;
@@ -47,5 +50,16 @@ public class ListRecord extends LinkedList<DataField> implements Record {
 		}
 		
 		return null;
+	}
+
+	public Map<String, Object> toMap() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		for (Iterator<DataField> iterator = this.iterator(); iterator.hasNext();) {
+			DataField df = (DataField) iterator.next();
+			map.put(df.getName(), df.getData());
+		}
+		
+		return map;
 	}
 }
