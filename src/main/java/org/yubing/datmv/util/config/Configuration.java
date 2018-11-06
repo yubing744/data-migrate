@@ -73,7 +73,7 @@ public class Configuration {
 				value = System.getenv(envKey);
 				
 				if (logger.isDebugEnabled()) {
-					logger.debug(String.format("ENV Override: %s %s %s %s", key, envKey, value));
+					logger.debug(String.format("ENV Override: %s %s %s", key, envKey, value));
 				}
 			}
 			
