@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * 全局配置
@@ -15,6 +17,8 @@ import org.apache.commons.lang.math.NumberUtils;
 
 public class Configuration {
 
+	private static final Log logger = LogFactory.getLog(Configuration.class);
+	
 	private static Configuration gConfig = null;
 	private static AtomicBoolean initialized = new AtomicBoolean();
 
@@ -46,13 +50,44 @@ public class Configuration {
 	private Map<String, String> configMap = null;
 
 	/**
+     * 构建环境变量Key
+     * 
+     * @param  key [description]
+     * @return     [description]
+     */
+    protected static String makeEnvKey(String key) {
+        return key.replaceAll("\\.", "_").toUpperCase();
+    }
+    
+	/**
 	 * 通过 key来访问字符串值
 	 * 
 	 * @param key
 	 * @return
 	 */
 	public static String getValue(String key) {
-		return getInstance().configMap.get(key);
+		try {
+			String value = System.getProperty(key);
+			if (value == null) {
+				String envKey = makeEnvKey(key);
+				value = System.getenv(envKey);
+				
+				if (logger.isDebugEnabled()) {
+					logger.debug(String.format("ENV Override: %s %s %s %s", key, envKey, value));
+				}
+			}
+			
+			if (value == null) {
+				value = getInstance().configMap.get(key);
+			}
+			
+			return value;
+		} catch (Throwable ex) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Could not access system property '" + key + "': " + ex);
+			}
+			return null;
+		}
 	}
 
 	/**
